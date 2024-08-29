@@ -1,0 +1,29 @@
+<div class="login-container">
+    <div style="text-align: center;">
+        <h5 style="margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;">
+            <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
+        </h5>
+    </div>
+    <h5>Connexion</h5>
+    <form (ngSubmit)="connexion()" [formGroup]="formulaireconnexion">
+        <div class="field col-12">
+            <p-floatLabel>
+                <input id="email" type="text" pInputText formControlName="email" />
+                <label for="email">Adresse e-mail</label>
+            </p-floatLabel>
+        </div>
+        <div class="field col-12">
+            <p-floatLabel>
+                <input id="password" type="password" pInputText formControlName="password" />
+                <label for="password">Mot de passe</label>
+            </p-floatLabel>
+        </div>
+        <div class="forgot-password">
+            <a href="#" (click)="onForgotPassword()">Mot de passe oublié ?</a>
+        </div>
+        <div class="field col-12">  
+            <p-button type="submit" label="Connexion" [disabled]="formulaireconnexion.invalid"></p-button>
+        </div>
+    </form>
+</div>
+

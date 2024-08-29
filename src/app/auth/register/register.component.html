@@ -1,0 +1,50 @@
+<div class="card" style="max-width: 500px; margin: 2rem auto; padding: 2rem; border: 2px solid #d9dce0; border-radius: 10px; box-shadow: 0 4px 8px rgba(81, 81, 81, 0.1);">
+    <div style="text-align: center;">
+        <h5 style=" margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;"><span style="color: green;">Ges</span><span style="color: red;">Inci</span></h5>
+    </div>
+    <form (ngSubmit)="inscription()" [formGroup]="formulaire" >
+        <div class="p-fluid formgrid grid">
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="nom" type="text" pInputText formControlName="nom"/>
+                    <label for="nom">Nom</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="prenom" type="text" pInputText formControlName="prenom" />
+                    <label for="prenom">Prénom</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col-12" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="email" type="text" pInputText formControlName="email" />
+                    <label for="email">Adresse e-mail</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col-12" style="margin-bottom: 1.5rem; position: relative;">
+                <p-floatLabel>
+                    <input id="password" type="password" pInputText formControlName="password" />
+                    <label for="password">Mot de passe</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col-12" style="margin-bottom: 1.5rem; position: relative;">
+                <p-floatLabel>
+                <input id="confirmPassword" type="password" pInputText formControlName="confirmPassword" />
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+            </p-floatLabel>
+            </div>
+            <div class="field col-12" style="margin-bottom: 1.5rem;">
+                <div class="field-checkbox">
+                    <input type="checkbox" id="coche" formControlName="coche"/>
+                    <label for="coche">J'accepte les conditions d'utilisation</label>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <p-button type="submit" [disabled]="formulaire.invalid" label="S'inscrire"  ></p-button>
+            </div>
+        </div>  
+    </form>
+</div>
+
+

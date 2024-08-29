@@ -1,0 +1,48 @@
+<div class="flex flex-column gap-4 w-screen surface-300">
+    <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white">
+        <div class="flex gap-4">
+            <p-button (click)="switchMenu()" icon="pi pi-align-justify" severity="secondary" />
+            <div class="text-3xl font-bold">GesInci</div>
+        </div>
+        <div>
+            <p-button (click)="user.toggle($event)" label="Natacha ZONGO" [text]="true" [raised]="true" severity="secondary" />
+            <p-overlayPanel #user>
+                <p-menu [model]="userMenuItems" />
+            </p-overlayPanel>
+        </div>
+    </div>
+    <div class="w-full flex gap-4 ">    
+    <div class="menuBar" [class.close]="!isMenuOpen()">
+            <p-menu [model]="items">
+                <ng-template pTemplate="submenuheader" let-item>
+                    <span class="text-primary font-bold">{{ item.label }}</span>
+                </ng-template>
+                <ng-template pTemplate="item" let-item>
+                    @if(item.route){
+                        <ng-container>
+                            <a [routerLink]="item.route" class="p-menuitem-link">
+                                <span [class]="item.icon"></span>
+                                <span class="ml-2">{{ item.label }}</span>
+                            </a>
+                        </ng-container>
+                    }@else if(item.url){
+                        <ng-template #elseBlock>
+                            <a [href]="item.url" class="p-menuitem-link">
+                                <span [class]="item.icon"></span>
+                                <span class="ml-2">{{ item.label }}</span>
+                            </a>
+                        </ng-template>
+                    }@else{
+                        <a pRipple class="flex align-items-center p-menuitem-link">
+                            <span [class]="item.icon"></span>
+                            <span class="ml-2">{{ item.label }}</span>
+                        </a>
+                    }
+                </ng-template>
+            </p-menu>
+        </div>
+        <div class="w-full">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
