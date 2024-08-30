@@ -66,6 +66,16 @@ export class LayoutComponent implements OnInit {
                 ]
             },
             {
+                label: 'Parametre',
+                items: [
+                    {
+                        label: 'Roles',
+                        icon: 'pi pi-cog',
+                        route: "roles"
+                    },
+                ]
+            },
+            {
                 label: 'Profile',
                 items: [
                     {
