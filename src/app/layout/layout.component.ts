@@ -1,9 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
     selector: 'app-layout',
@@ -21,7 +22,13 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 export class LayoutComponent implements OnInit {
     items: MenuItem[] | undefined;
     userMenuItems: MenuItem[] | undefined;
-    isMenuOpen = signal(true);    
+    isMenuOpen = signal(true);   
+    
+    constructor (
+        private authService: AuthService,
+        private router: Router,
+        
+    ) { }
 
     switchMenu() {
         console.log("SWITCH");
@@ -67,7 +74,11 @@ export class LayoutComponent implements OnInit {
                     },
                     {
                         label: 'Logout',
-                        icon: 'pi pi-sign-out'
+                        icon: 'pi pi-sign-out',
+                        command: () => {
+                            this.authService.logout();
+                            this.router.navigateByUrl('login');
+                        }
                     }
                 ]
             }

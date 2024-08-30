@@ -1,10 +1,12 @@
 import { AuthService } from './../auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserConnexion } from './userconnexion.model';
 import { InputText, InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { ButtonModule } from 'primeng/button';
+import { LoadingComponent } from '../../Share/loading/loading.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-name',
@@ -12,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
     styleUrls: ['./connexion.component.scss'],
     standalone: true,
     imports: [
+        LoadingComponent,
         InputTextModule,
         FloatLabelModule,
         ButtonModule,
@@ -19,16 +22,18 @@ import { ButtonModule } from 'primeng/button';
     ]
 })
 export class ConnexionComponent implements OnInit {
+    isLoading = signal(false);
+    formulaireconnexion! : FormGroup;
     constructor(
         private fb: FormBuilder,
-        private AuthService: AuthService
-    ) { }
+        private authService: AuthService,
+        private router: Router
+    ) {}
 
     ngOnInit(): void { 
         this.initForm();
     }
 
-    formulaireconnexion! : FormGroup;
     initForm(){
         this.formulaireconnexion = this.fb.group({
             email: ['', Validators.required],
@@ -38,10 +43,18 @@ export class ConnexionComponent implements OnInit {
 
     
     async connexion () {
-        console.log(this.formulaireconnexion.value);
-        const userConnexion: UserConnexion = this.formulaireconnexion.value as UserConnexion;
-        const resultat = await this.AuthService.connexion(userConnexion);
-        console.log(resultat);
+        this.isLoading.set(true);
+        try {
+            console.log(this.formulaireconnexion.value);
+            const userConnexion: UserConnexion = this.formulaireconnexion.value as UserConnexion;
+            const resultat = await this.authService.connexion(userConnexion);
+            console.log(resultat);
+            this.router.navigateByUrl("");
+        } catch (error) {
+            console.log(error);
+        }finally{
+            this.isLoading.set(false);
+        }
     } 
 
     //fonction de mot de passe oublie l'utilisateur sera rediriger vers un formulaire ou il va renseigner son email

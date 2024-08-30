@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { BACKEND_API_URL } from '../Share/const';
+import { firstValueFrom, tap } from 'rxjs';
+import { BACKEND_API_URL, BACKEND_URL, LocalStorageFields, SANCTUM_CSRF } from '../Share/const';
 import { RegisterUser } from './register/user.model';
 import { UserConnexion } from './connexion/userconnexion.model';
 
@@ -10,11 +10,11 @@ import { UserConnexion } from './connexion/userconnexion.model';
     providedIn: 'root'
 })
 export class AuthService {
+    accessToken?: string;
 
-    registerURL =BACKEND_API_URL+'/register';
-    connexionURL =BACKEND_API_URL+'/login';
-
-    constructor(private http: HttpClient) {}   
+    constructor(private http: HttpClient) {
+        this.accessToken = localStorage.getItem(LocalStorageFields.accessToken) ?? undefined;
+    }   
 
     //-----------------------------Inscription-------------------------------------------
     register( registerData: RegisterUser): Promise<any> {
@@ -33,23 +33,26 @@ export class AuthService {
         const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
         return firstValueFrom(
             //this.http.post(this.registerURL, body.toString(), {headers})
-            this.http.post(this.registerURL, formData)
+            this.http.post(BACKEND_API_URL+"/register", formData, {withCredentials: true})
         );  
     }
 
 //-----------------------------Connexion-------------------------------------------
-    connexion ( userConnexion: UserConnexion): Promise<any> {
-        let body = new HttpParams();    
-        body.set ('email',userConnexion.email);    
-        body.set ('password', userConnexion.password);    
-        const formConnexionData = {
-            'email': userConnexion.email,
-            'password':  userConnexion.password,
-        };
-        const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    connexion ( userConnexion: UserConnexion): Promise<any>{   
         return firstValueFrom(
-            //this.http.post(this.connexionURL, body.toString(), {headers})
-            this.http.post(this.connexionURL, formConnexionData)
+            this.http.post<{access_token: string}>(BACKEND_API_URL+"/login", userConnexion).pipe(
+                tap(
+                    (resutl)=>{
+                        this.accessToken = resutl.access_token;
+                        localStorage.setItem(LocalStorageFields.accessToken, this.accessToken);
+                    }
+                )
+            )
         );
     } 
+
+    logout() {
+        this.accessToken = undefined;
+        localStorage.removeItem(LocalStorageFields.accessToken);
+    }
 }
