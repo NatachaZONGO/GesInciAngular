@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabel, FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../auth.service';
 import { matchValidator } from '../../Share/validators';
 import { RegisterUser } from './user.model';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
     selector: 'app-register',
@@ -17,12 +18,14 @@ import { RegisterUser } from './user.model';
         InputTextModule,
         FloatLabelModule,
         ButtonModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        PasswordModule,
+        FormsModule
     ],
 })
 export class RegisterComponent implements OnInit {
     
-
+    value!: string;
     ngOnInit(): void {
         this.initForm();
      }
@@ -59,3 +62,5 @@ export class RegisterComponent implements OnInit {
     }
 
 }
+
+

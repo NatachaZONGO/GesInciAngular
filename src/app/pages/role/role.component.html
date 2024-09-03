@@ -1,0 +1,84 @@
+<div class="surface-ground p-2">
+    <!--Ce composant affiche le loader-->
+    <app-loading [(isLoading)]="isLoading"/>
+    <div class="p-4">
+        <!--Au click on affiche le formulaire-->
+        <p-button (click)="showFormulaire.set(true)" icon="pi pi-plus"  label="Ajouter" severity="success" />
+    </div>
+
+    <div class="flex align-items-center justify-content-between">
+        <h4 style="color: rgb(74, 183, 237);" class="m-0">Gestion des roles</h4>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search pi pi-spinner pi-spin" ></i>
+            <input 
+                pInputText 
+                type="text"  
+                placeholder="Search..."
+                (input)="onFilter($event)"/>
+        </span>
+    </div>
+    
+
+    <!--
+        Composant table voir primeNG: https://primeng.org/table 
+    -->
+    
+    <p-table #dt 
+        [value]="roles()"
+        styleClass="p-datatable-striped" 
+        [paginator]="true"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['nom', 'description']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-role>
+            <tr>
+                <td>{{role.nom}}</td>
+                <td>{{role.description}}</td>
+                <td class="flex flex-wrap gap-2">
+                    <!--Bouttons d'action voir role.component.ts pour les fonctions -->
+                    <p-button (click)="update(role)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
+                    <p-button (click)="deleteRole(role)" icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <!--
+        Composant dialog pour l'affichage de fenêtre modale voir primeng: https://primeng.org/dialog
+    -->
+    <p-dialog [modal]="true" [(visible)]="showFormulaire" [closable]="false" [style]="{ width: '25rem' }">
+        <div style="text-align: center;">
+            <h5 style=" margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;"><span style="color: green;">Ges</span><span style="color: red;">Inci</span></h5>
+        </div>
+        <form class="flex flex-column gap-4 p-4" [formGroup]="roleForm">
+            <div>
+                <p-floatLabel>
+                    <input id="nom" type="text" pInputText formControlName="nom" />
+                    <label for="nom">Nom</label>
+                </p-floatLabel>
+            </div>
+            <div>
+                <p-floatLabel>
+                    <textarea 
+                        formControlName="description"
+                        id="float-input" 
+                        rows="5" cols="20" 
+                        pInputTextarea>
+                    </textarea>
+                    <label for="float-input">Description</label>
+                </p-floatLabel>
+            </div>
+            <div class="flex flex-wrap justify-content-between px-4 py-2">
+                <p-button [disabled]="roleForm.invalid" (click)="save()" label="Enregistrer" severity="success" />
+                <p-button (click)="closeForm()" label="Annuler" severity="secondary" />
+            </div>
+        </form>
+    </p-dialog>
+
+</div>

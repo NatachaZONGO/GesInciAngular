@@ -6,6 +6,7 @@ interface User {
 }
 
 export interface RegisterUser {
+    id: number;
     nom: string;
     prenom: string;
     email: string;

@@ -1,0 +1,109 @@
+<div class="surface-ground p-2">
+    <app-loading [(isLoading)]="isLoading"/>
+    <div class="p-4">
+        <p-button (click)="showFormulaire.set(true)" icon="pi pi-plus"  label="Ajouter" severity="success" />
+    </div>
+
+    <div class="flex align-items-center justify-content-between">
+        <h4 style="color: rgb(74, 183, 237);" class="m-0">Gestion des utilisateurs</h4>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search pi pi-spinner pi-spin"></i>
+            <input 
+                pInputText 
+                type="text"  
+                placeholder="Search..."
+                (input)="onFilter($event)"/>
+        </span>
+    </div>
+    <p-table #dt
+        [value]="users()"
+        styleClass="p-datatable-striped"
+        [paginator]="true"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['nom', 'prenom', 'email', 'role.nom']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>{{user.nom}}</td>
+                <td>{{user.prenom}}</td>
+                <td>{{user.email}}</td>
+                <td class="flex flex-wrap gap-2">
+                    <p-button (click)="update(user)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
+                    <p-sidebar [(visible)]="sidebarVisible" position="right">
+                        <p-table>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Nom</th>
+                                    
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-role>
+                                <tr>
+                                    <td>{{role.nom}}</td>
+                                    <td></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-sidebar>
+                    <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [outlined]="true"  [rounded]="true" severity="info" />
+                    <p-button (click)="deleteUser(user)" icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-dialog [(visible)]="showFormulaire" [modal]="true" [style]="{width: '450px', overflow: 'hidden'}" [draggable]="false" [resizable]="false">
+       
+        <div style="text-align: center;">
+            <h5 style=" margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;"><span style="color: green;">Ges</span><span style="color: red;">Inci</span></h5>
+        </div>
+        <form class="flex flex-column gap-4 p-4" [formGroup]="userForm">
+            <div class="p-fluid formgrid grid">
+                <div class="field col" style="margin-bottom: 1.5rem;">
+                    <p-floatLabel>
+                        <input id="nom" type="text" pInputText formControlName="nom" />
+                        <label for="nom">Nom</label>
+                    </p-floatLabel>
+                </div>
+                <div class="field col" style="margin-bottom: 1.5rem;">
+                    <p-floatLabel>
+                        <input id="prenom" type="text" pInputText formControlName="prenom" />
+                        <label for="prenom">Prenom</label>
+                    </p-floatLabel>
+                </div>
+                <div class="field col-12" style="margin-bottom: 1.5rem;">
+                    <p-floatLabel>
+                        <input id="email" type="text" pInputText formControlName="email" />
+                        <label for="email">Adresse e-mail</label>
+                    </p-floatLabel>
+                </div>
+                <div class="field col-12" style="margin-bottom: 1.5rem; position: relative;">
+                    <p-floatLabel>
+                        <input id="password" type="password" pInputText formControlName="password" />
+                        <label for="password">Mot de passe</label>
+                    </p-floatLabel>
+                </div>
+                <div class="field col-12" style="margin-bottom: 1.5rem; position: relative;">
+                    <p-floatLabel>
+                        <input id="confirmPassword" type="password" pInputText formControlName="confirmPassword" />
+                        <label for="confirmPassword">Confirmer le mot de passe</label>
+                    </p-floatLabel>
+                </div>
+            </div>
+        </form>
+        <ng-template pTemplate="footer">
+            <div class="flex justify-content-between">
+                <p-button (click)="save()" label="Enregistrer" severity="success" />
+                <p-button (click)="closeForm()" label="Annuler" severity="secondary" /> 
+            </div>
+        </ng-template>
+    </p-dialog>
+
+</div>

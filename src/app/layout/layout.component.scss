@@ -5,6 +5,15 @@
 .menuBar{
     width: 18rem;
     transition: width 0.5s ease-in-out;
-    
+}
+
+.header{
+    height: 5rem;
+}
+
+ .corps{
+    position: absolute;
+    top: 5rem ;
+    left: 0rem;
 }
 
