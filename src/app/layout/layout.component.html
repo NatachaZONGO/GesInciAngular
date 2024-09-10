@@ -1,5 +1,5 @@
 <div class="w-screen surface-300">
-    <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white fixed z-3 header">
+    <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white header">
         <div class="flex gap-4">
             <p-button (click)="switchMenu()" icon="pi pi-align-justify" severity="secondary" />
             <div class="text-3xl font-bold">GesInci</div>
@@ -11,7 +11,7 @@
             </p-overlayPanel>
         </div>
     </div>
-    <div class="w-full flex gap-4 corps z-0"> 
+    <div class="w-full flex gap-4 corps"> 
     <div class="menuBar" [class.close]="!isMenuOpen()" >
             <p-menu [model]="items" >
                 <ng-template pTemplate="submenuheader" let-item>

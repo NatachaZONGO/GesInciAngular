@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex align-items-center justify-content-between">
-        <h4 style="color: rgb(74, 183, 237);" class="m-0">Gestion des roles</h4>
+        <h4 style="color: rgb(74, 183, 237);" class="m-0">Gestion des services</h4>
         <span class="p-input-icon-left">
             <i class="pi pi-search pi pi-spinner pi-spin" ></i>
             <input 
@@ -26,28 +26,30 @@
     -->
     
     <p-table #dt 
-        [value]="roles()"
+        [value]="services()"
         styleClass="p-datatable-striped" 
         [paginator]="true"
         [rows]="5"
         [rowsPerPageOptions]="[5, 10, 20]"
-        [globalFilterFields]="['nom', 'description']">
+        [globalFilterFields]="['nom', 'description', 'departement.nom']">
         <ng-template pTemplate="header">
             <tr>
                 <th>Nom</th>
+                <th>Departement</th>
                 <th>Description</th>
                 <th></th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-role>
+        <ng-template pTemplate="body" let-service>
             <tr>
-                <td>{{role.nom}}</td>
-                <td>{{role.description}}</td>
+                <td>{{service.nom}}</td>
+                <td>{{ service.departement.nom }}</td>
+                <td>{{service.description}}</td>
                 <td class="flex flex-wrap gap-2">
-                    <!--Bouttons d'action voir role.component.ts pour les fonctions -->
+                    <!--Bouttons d'action voir service.component.ts pour les fonctions -->
 
-                    <p-button (click)="update(role)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
-                    <p-button (click)="confirmDelete($event, role) "  icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" />
+                    <p-button (click)="update(service)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
+                    <p-button (click)="confirmDelete($event, service) "  icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" />
                 </td>
             </tr>
         </ng-template>
@@ -59,13 +61,20 @@
         <div style="text-align: center;">
             <h5 style=" margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;"><span style="color: green;">Ges</span><span style="color: red;">Inci</span></h5>
         </div>
-        <form class="flex flex-column gap-4 p-4" [formGroup]="roleForm">
+        <form (ngSubmit)="save()" class="flex flex-column gap-4 p-4" [formGroup]="serviceForm">
             <div>
                 <p-floatLabel>
                     <input id="nom" type="text" pInputText formControlName="nom" />
                     <label for="nom">Nom</label>
                 </p-floatLabel>
             </div>
+            <p-dropdown 
+                [options]="departements"  
+                formControlName="departement"  
+                placeholder="Sélectionner un département"  
+                optionLabel="nom"
+                [showClear]="true">
+            </p-dropdown>
             <div>
                 <p-floatLabel>
                     <textarea 
@@ -78,7 +87,7 @@
                 </p-floatLabel>
             </div>
             <div class="flex flex-wrap justify-content-between px-4 py-2">
-                <p-button [disabled]="roleForm.invalid" (click)="save()" label="Enregistrer" severity="success" />
+                <p-button type="submit" [disabled]="serviceForm.invalid" label="Enregistrer" severity="success" />
                 <p-button (click)="closeForm()" label="Annuler" severity="secondary" />
             </div>
         </form>

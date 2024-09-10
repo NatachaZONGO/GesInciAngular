@@ -16,6 +16,12 @@ export class UserService {
             this.http.get<User[]>(this.userUrl +'/users')
         );
     }
+    
+    getAllWithRoles(): Promise<User[]> {
+        return firstValueFrom(
+            this.http.get<User[]>(this.userUrl +'/getUsersWithRoles')
+        );
+    }
 
     getById(id: number): Promise<User> {
         return firstValueFrom(
@@ -38,6 +44,12 @@ export class UserService {
     delete(id: number): Promise<User> {
         return firstValueFrom(
             this.http.delete<User>(`${this.userUrl}/deleteUser/${id}`)
+        );
+    }
+
+    attachDetachRole(userId:number, rolesId: number[]): Promise<any>{
+        return firstValueFrom(
+            this.http.post(`${this.userUrl}/attachDetachRoles/${userId}`, {"roles": rolesId})
         );
     }
 

@@ -1,25 +1,25 @@
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { Table, TableModule } from 'primeng/table';
-import { Role } from './role.model';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoadingComponent } from '../../Share/loading/loading.component';
-import { RoleService } from './role.service';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { SidebarModule } from 'primeng/sidebar';
+import { Departement } from './departement.model';
+import { DepartementService } from './departement.service';
+
 
 
 
 @Component({
     standalone: true,
-    selector: 'app-role',
-    templateUrl: './role.component.html',
+    selector: 'app-departement',
+    templateUrl: './departement.component.html',
     providers: [
         MessageService,
         ConfirmationService,
@@ -37,17 +37,17 @@ import { SidebarModule } from 'primeng/sidebar';
         ConfirmPopupModule
         ]
 })
-export class RoleComponent implements OnInit {
+export class DepartementComponent implements OnInit {
 @ViewChild ('dt') dt! : Table;  
 
-    roles = signal<Role[]>([]);//liste de tout les roles
-    roleForm!: FormGroup;//formulaire pour créer et update un role
+    departements = signal<Departement[]>([]);//liste de tout les departements
+    departementForm!: FormGroup;//formulaire pour créer et update un departement
     isLoading = signal(false);//booléen pour afficher le loading
     showFormulaire = signal(false);//ce booléen indique si on doit afficher le formulaire
 
     constructor(
         private fb: FormBuilder,
-        private RoleService: RoleService, //service qui est charger de la communication avec l'api
+        private DepartementService: DepartementService, //service qui est charger de la communication avec l'api
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
     ) { }
@@ -63,8 +63,8 @@ export class RoleComponent implements OnInit {
      * Cette fonction initalise le formulaire
      */
     initForm(): void{
-        this.roleForm = this.fb.group({
-            //comme aucun role normale n'a le id -1, en fesant cela ca me permet de savoir
+        this.departementForm = this.fb.group({
+            //comme aucun departement normale n'a le id -1, en fesant cela ca me permet de savoir
             //si le formulaire contient les infos d'un rôle ou pas
             id: [-1],
             nom: ["", Validators.required],
@@ -73,13 +73,13 @@ export class RoleComponent implements OnInit {
     }
 
     /**
-     * Cette fonction récupère tout les roles du backend
+     * Cette fonction récupère tout les departements du backend
      */
     async initData(){
         this.isLoading.set(true);//permet d'afficher le loading
         try {
-            this.roles.set(
-                await this.RoleService.getAll()
+            this.departements.set(
+                await this.DepartementService.getAll()
             );
         } catch (error) {
             console.log(error);
@@ -91,14 +91,14 @@ export class RoleComponent implements OnInit {
     /**
      * Cette fonction rempli le formulaire avec les données du rôle
      * et l'affiche
-     * @param role 
+     * @param departement 
      */
-    update(role: Role){
+    update(departement: Departement){
         //remplissage
-        this.roleForm.patchValue({
-            id: role.id,
-            nom: role.nom,
-            description: role.description
+        this.departementForm.patchValue({
+            id: departement.id,
+            nom: departement.nom,
+            description: departement.description
         });
         //déclenchement de l'affichage du formulaire
         this.showFormulaire.set(true);
@@ -108,41 +108,41 @@ export class RoleComponent implements OnInit {
      * Fonction chargée de la création et de la mise à jour du formulaire
      */
     async save(){
-        const formulaireData = this.roleForm.value as Role;
+        const formulaireData = this.departementForm.value as Departement;
         this.isLoading.set(true);
         try{
-            /*Si id=-1 alors le formulaire ne contient pas les infos d'un role.
+            /*Si id=-1 alors le formulaire ne contient pas les infos d'un departement.
             **Donc c'est une création
             */
             if(formulaireData.id == -1){
                 //si c'est -1 alors on veut faire un ajout
                 //On attend l'ajout au backend
-                const savedRole = await this.RoleService.create(formulaireData);
+                const savedDepartement = await this.DepartementService.create(formulaireData);
                 //on met à jour le tableau
-                this.roles.update((val)=>{
-                    //on ajoute le nouveau role
-                    val.push(savedRole);
+                this.departements.update((val)=>{
+                    //on ajoute le nouveau departement
+                    val.push(savedDepartement);
                     return val;
                 });
-                this.messageService.add({severity:'success', summary: 'Succès', detail: 'Role ajouté avec succès', life: 3000});
+                this.messageService.add({severity:'success', summary: 'Succès', detail: 'departement ajouté avec succès', life: 3000});
             }else
-            /*Dans ce cas le formulaire contient les données d'un role
+            /*Dans ce cas le formulaire contient les données d'un departement
             **alors on tente de le mettre à jour
             **/
             {
                 //s'il y a un id valide alors c'est un update
                 //on attend la mise
-                await this.RoleService.update(formulaireData);
-                //on récupère l'index du role modifié dans le tableau de tout les roles
-                const roleIndex = this.getRoleIndexById(formulaireData.id);
-                if(roleIndex!=-1){
-                    //role trouvé dans le tableau
-                    this.roles.update(val => {
-                        //on met à jour le role à cet index
-                        val[roleIndex] = formulaireData;
+                await this.DepartementService.update(formulaireData);
+                //on récupère l'index du departement modifié dans le tableau de tout les departements
+                const departementIndex = this.getdepartementIndexById(formulaireData.id);
+                if(departementIndex!=-1){
+                    //departement trouvé dans le tableau
+                    this.departements.update(val => {
+                        //on met à jour le departement à cet index
+                        val[departementIndex] = formulaireData;
                         return val;
                     });
-                    this.messageService.add({severity:'success', summary: 'Succès', detail: 'Role mis à jour avec succès', life: 3000});
+                    this.messageService.add({severity:'success', summary: 'Succès', detail: 'departement mis à jour avec succès', life: 3000});
                 }
             }
             //on ferme le formulaire
@@ -157,19 +157,19 @@ export class RoleComponent implements OnInit {
 
     /**
      * Cette fonction supprime un rôle
-     * @param roleToDelete 
+     * @param departementToDelete 
      */
-    async deleteRole(roleToDelete: Role){
+    async deleteDepartement(departementToDelete: Departement){
         this.isLoading.set(true);
         try {
             //Attente de la suppression au backend
-            await this.RoleService.delete(roleToDelete.id);
+            await this.DepartementService.delete(departementToDelete.id);
             //suppression dans notre tableau
-            this.roles.update(val => {
-                //cette fonction filtre et retourne tout les roles ou : role.id!=roleToDelete.id
-                return val.filter(role => role.id!=roleToDelete.id);
+            this.departements.update(val => {
+                //cette fonction filtre et retourne tout les departements ou : departement.id!=departementToDelete.id
+                return val.filter(departement => departement.id!=departementToDelete.id);
             }); 
-            this.messageService.add({severity:'success', summary: 'Succès', detail: 'Role supprimé avec succès', life: 3000});   
+            this.messageService.add({severity:'success', summary: 'Succès', detail: 'departement supprimé avec succès', life: 3000});   
         } catch (error) {
             console.log(error);
             this.messageService.add({severity:'error', summary: 'Erreur', detail: 'Une erreur est survenue', life: 3000});
@@ -182,7 +182,7 @@ export class RoleComponent implements OnInit {
      * Cette fonction remet le formulaire a son état initiale et le ferme
      */
     closeForm(){
-        this.roleForm.patchValue({
+        this.departementForm.patchValue({
             id: -1,
             nom: "",
             description: ""
@@ -191,16 +191,16 @@ export class RoleComponent implements OnInit {
     }
 
     /**
-     * Cette fonction renvoit l'index du role dont l'id est en
+     * Cette fonction renvoit l'index du departement dont l'id est en
      * paramètre. Il cherche dans le tableau de tout les rôles
      * S'il ne trouve pas, il rnevoit -1
      * @param id 
      * @returns 
      */
-    getRoleIndexById(id: number): number{
+    getdepartementIndexById(id: number): number{
         //renvoit -1 si il ne trouve pas
-        return this.roles().findIndex(
-            role => role.id == id
+        return this.departements().findIndex(
+            departement => departement.id == id
         );
     }
 
@@ -209,14 +209,14 @@ export class RoleComponent implements OnInit {
         this.dt.filterGlobal(inputElement.value, 'contains');
     }
 
-    confirmDelete(event: Event ,roleToDelete: Role) {
+    confirmDelete(event: Event ,departementToDelete: Departement) {
         this.confirmationService.confirm({
             target: event.target as EventTarget,
-            message: 'Etes-vous sûr de vouloir supprimer ce role ?',
+            message: 'Etes-vous sûr de vouloir supprimer ce departement ?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.deleteRole(roleToDelete);
+                this.deleteDepartement(departementToDelete);
             },
             
         });

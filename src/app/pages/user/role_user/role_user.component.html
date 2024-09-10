@@ -1,0 +1,17 @@
+<div> 
+    <div class="mb-4 font-bold">
+        {{user()?.prenom}} {{user()?.nom}}
+    </div>
+    @for (selectRole of checkedRoles(); track selectRole.role.id) {
+        <div class="text-lg font-bold my-4">
+            <p-checkbox 
+            [(ngModel)]="selectRole.isSelected" 
+            [binary]="true" 
+            variant="filled" />
+            {{selectRole.role.nom}}
+        </div>
+    }
+    <div class="flex justify-content-center">
+        <p-button (click)="save()" label="Enregistrer" [text]="true" [raised]="true" severity="success" />
+    </div>
+</div>

@@ -1,21 +1,24 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from '../auth/auth.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
     selector: 'app-layout',
     templateUrl: './layout.component.html',
     styleUrl: './layout.component.scss',
     standalone: true,
+    providers: [MessageService],
     imports:[
         ButtonModule,
         MenuModule,
         RouterOutlet,
         OverlayPanelModule,
+        ToastModule,
         
     ]
 })
@@ -27,6 +30,7 @@ export class LayoutComponent implements OnInit {
     constructor (
         private authService: AuthService,
         private router: Router,
+        private messageService: MessageService,
         
     ) { }
 
@@ -81,6 +85,21 @@ export class LayoutComponent implements OnInit {
                         icon: 'pi pi-cog',
                         route: "roles"
                     },
+                    {
+                        label: 'Departements',
+                        icon: 'pi pi-cog',
+                        route: "departements"
+                    },
+                    {
+                        label: 'Services',
+                        icon: 'pi pi-cog',
+                        route: "services"
+                    },
+                    {
+                        label: 'Types Incidents',
+                        icon: 'pi pi-cog',
+                        route: "typeIncidents"
+                    }
                 ]
             },
             {

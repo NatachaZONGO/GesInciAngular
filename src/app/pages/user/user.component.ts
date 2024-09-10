@@ -1,5 +1,7 @@
+import { ToastModule } from 'primeng/toast';
+import { RoleService } from './../role/role.service';
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from './user.model';
 import { Table, TableModule } from 'primeng/table';
 import { UserService } from './user.service';
@@ -10,23 +12,37 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextarea, InputTextareaModule } from 'primeng/inputtextarea';
 import { SidebarModule } from 'primeng/sidebar';
+import { RoleComponent } from '../role/role.component';
+import { Role } from '../role/role.model';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RoleUserComponent } from './role_user/role_user.component';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
     selector: 'app-user',
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.scss'],
     standalone: true,
+    providers: [
+        MessageService,
+        ConfirmationService,
+    ],
     imports: [
-        TableModule,
-        ButtonModule,
-        DialogModule,
-        ReactiveFormsModule,
-        LoadingComponent,
-        FloatLabelModule,
-        InputTextModule,
-        InputTextareaModule,
-        SidebarModule
-    ]
+    TableModule,
+    ButtonModule,
+    DialogModule,
+    ReactiveFormsModule,
+    LoadingComponent,
+    FloatLabelModule,
+    InputTextModule,
+    InputTextareaModule,
+    FormsModule,
+    SidebarModule,
+    RoleUserComponent,
+    ToastModule,
+    ConfirmPopupModule,
+]
 })
 export class UserComponent implements OnInit {
     @ViewChild('dt') dt!: Table; 
@@ -34,19 +50,31 @@ export class UserComponent implements OnInit {
     userForm!: FormGroup; 
     isLoading = signal(false);
     showFormulaire = signal(false);
-
-    sidebarVisible: boolean = true;
+    showRoleSidebar = signal(false);
+    selectedUser = signal<User|undefined>(undefined);
+    
 
     constructor(
         private fb : FormBuilder,
         private userService : UserService, 
+        private roleService : RoleService,
+        private messageService : MessageService,
+        private confirmationService : ConfirmationService,
+        
     ) { }
 
     ngOnInit(): void { 
         this.initForm();
         this.initData().then();
+          
     }
 
+    openRoleSideBar(user: User) {
+        this.selectedUser.set(user);
+        this.showRoleSidebar.set(true);
+    }
+
+  
     // Cette fonction initalise le formulaire
     initForm(): void {
         this.userForm = this.fb.group({
@@ -63,7 +91,7 @@ export class UserComponent implements OnInit {
     async initData() {
         this.isLoading.set(true);
         try {
-            const usersData = await this.userService.getAll();
+            const usersData = await this.userService.getAllWithRoles();
             console.log('Data from service:', usersData);
             if (Array.isArray(usersData)) {
                 this.users.set(usersData);
@@ -95,6 +123,7 @@ export class UserComponent implements OnInit {
                     val.push(savedUser);
                     return val;
                 });
+                this.messageService.add({severity:'success', summary: 'Succès', detail: 'Utilisateur ajouté avec succès', life: 3000});
             } else {
                 // ID valide, c'est une mise à jour
                 await this.userService.update(formulaireData);
@@ -109,9 +138,11 @@ export class UserComponent implements OnInit {
             this.closeForm();
         } catch (err) {
             console.log(err);
+            this.messageService.add({severity:'error', summary: 'Erreur', detail: 'Une erreur est survenue', life: 3000});
         } finally {
             this.isLoading.set(false);
         }
+
     }
     
 
@@ -142,8 +173,10 @@ async deleteUser(userToDelete: User) {
             //cette fonction filtre et retourne tout les roles ou : role.id!=roleToDelete.id
             return val.filter(user => user.id!=userToDelete.id);
         });    
+        this.messageService.add({severity:'success', summary: 'Succès', detail: 'Utilisateur supprimé avec succès', life: 3000});
     } catch (error) {
         console.log(error);
+        this.messageService.add({severity:'error', summary: 'Erreur', detail: 'Une erreur est survenue', life: 3000});
     }finally{
         this.isLoading.set(false);
     }
@@ -172,4 +205,32 @@ async deleteUser(userToDelete: User) {
         const inputElement = event.target as HTMLInputElement;
         this.dt.filterGlobal(inputElement.value, 'contains');
     }
+
+    async onUserRoleEdit(event: number[]){
+        this.isLoading.set(true);
+        try {
+            const userId = 
+            await this.userService.attachDetachRole(this.selectedUser()!.id, event);
+            this.showRoleSidebar.set(false);
+
+        } catch (error) {
+            
+        }finally{
+            this.isLoading.set(false);
+        }
+    }
+
+    confirmDelete(event: Event ,userToDelete: User) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+            message: 'Etes-vous sûr de vouloir supprimer cet utilisateur ?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.deleteUser(userToDelete);
+            },
+            
+        });
+    }
+
 }
