@@ -11,7 +11,7 @@ export class RoleService {
 
     roleUrl = `${BACKEND_API_URL}/roles`;
 
-    constructor(private http: HttpClient){}
+    constructor(private http:  HttpClient){}
 
     getAll(): Promise<Role[]>{
         return firstValueFrom(

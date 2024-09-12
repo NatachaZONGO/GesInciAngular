@@ -222,4 +222,6 @@ export class DepartementComponent implements OnInit {
         });
     }
 
+    //fonction pour recuperer les departement et les services lies
+    
 }

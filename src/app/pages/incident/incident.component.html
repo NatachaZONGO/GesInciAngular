@@ -1,0 +1,101 @@
+<div class="surface-ground p-2">
+    <p-toast/>
+    <p-confirmPopup/>
+    <!--Ce composant affiche le loader-->
+    <app-loading [(isLoading)]="isLoading"/>
+    <div class="flex align-items-center justify-content-between">
+        <h4 style="color: rgb(74, 183, 237);" class="m-0">Liste des incidents</h4>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search pi pi-spinner pi-spin" ></i>
+            <input 
+                pInputText 
+                type="text"  
+                placeholder="Search..."
+                (input)="onFilter($event)"/>
+        </span>
+    </div>
+    <!--
+        Composant table voir primeNG: https://primeng.org/table 
+    -->
+    <p-table #dt 
+        [value]="incidents()"
+        styleClass="p-datatable-striped" 
+        [paginator]="true"
+        [rows]="5"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['nom', 'description','priorite','statut','type_incident_id','Service']">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Service</th>
+                <th>Statut</th>
+                <th>Priorite</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-incident>
+            <tr>
+                <td>{{incident.nom}}</td>
+                <td>{{incident.type_incident_id}}</td>
+                <td>{{incident.service_id}}</td>
+                <td>{{incident.statut}}</td>
+                <td>{{incident.priorite}}</td>
+                <td>{{incident.description}}</td>
+                <td class="flex flex-wrap gap-2">
+                    <!--Bouttons d'action voir incident.component.ts pour les fonctions -->
+
+                    <p-button (click)="update(incident)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
+                    <div>
+                        <p-button 
+                        icon="pi pi-eye" 
+                        [outlined]="true"  
+                        [rounded]="true" 
+                        severity="info" 
+                        (onClick)="showInciDetails()" 
+                       />
+                       <p-dialog 
+                       header="Détails" 
+                       [(visible)]="visible" 
+                       [modal]="true" 
+                       [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+                       [style]="{ width: '50vw' }" 
+                       [draggable]="false" 
+                       [resizable]="false">
+                       <div style="display: flex; justify-content: space-between; flex-wrap: wrap; padding: 20px;">
+                           <div style="width: 45%; padding-right: 10px;">
+                               <p>
+                                   <strong>Nom :</strong> {{incident.nom}}
+                               </p>
+                               <p>
+                                   <strong>Soumis par :</strong> {{incident.soumis_par}}
+                               </p>
+                               <p>
+                                   <strong>Date de soumission :</strong> {{incident.date_soumission}}
+                               </p>
+                           </div>
+                           <div style="width: 45%; padding-left: 10px;">
+                               <p>
+                                   <strong>Prise en charge par :</strong> {{incident.prise_en_charge_par}}
+                               </p>
+                               <p>
+                                   <strong>Date prise en charge :</strong> {{incident.date_prise_en_charge}}
+                               </p>
+                               <p>
+                                   <strong>Commentaires :</strong> {{incident.commentaires}}
+                               </p>
+                           </div>
+                       </div>
+                   
+                   </p-dialog>
+                   
+                    </div>
+                    <p-button (click)="confirmDelete($event, incident) "  icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    
+</div>

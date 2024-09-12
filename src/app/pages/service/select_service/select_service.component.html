@@ -1,0 +1,26 @@
+<div class="flex flex-wrap gap-4">
+    <p-dropdown
+        [(ngModel)]="selectedDepartement"
+        (onChange)="onDepartementChange()"
+        [options]="departements()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Sélectionner le departement" [disabled]="isLoading()">
+    </p-dropdown>
+    <p-dropdown
+        [(ngModel)]="service"
+        [options]="services()"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Sélectionner le service concerné" [disabled]="isLoading()">
+    </p-dropdown>
+</div>
+
+
+
+<!-- <div class="field col-12" style="margin-bottom: 1.5rem;">
+        
+    </div>
+    <div class="field col-12" style="margin-bottom: 1.5rem;">
+        
+    </div> -->

@@ -66,9 +66,17 @@ export class LayoutComponent implements OnInit {
                     {
                         label: 'Search',
                         icon: 'pi pi-search'
-                    }
+                    },
+                    {
+                        label: 'Signaler incident',
+                        icon: 'pi pi-exclamation-triangle' ,
+                        command: () => {
+                            this.router.navigateByUrl('signalerIncident');
+                        }
+                    },
                 ]
             },
+            
             {
                 label: 'Parametre',
                 icon: 'pi pi-spin pi-cog',

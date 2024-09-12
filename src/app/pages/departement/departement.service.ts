@@ -44,4 +44,10 @@ export class DepartementService {
         );
     }
 
+    getDepartementsWithServices(): Promise<Departement[]>{
+        return firstValueFrom(
+            this.http.get<Departement[]>(`${this.departementUrl}_/getDepartementsWithServices`)
+        );
+    }
+
 }

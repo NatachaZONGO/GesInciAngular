@@ -143,7 +143,7 @@ export class ServiceComponent implements OnInit {
     async save() {
         const formulaireData = this.serviceForm.value as Service;
         this.isLoading.set(true);
-    
+        
         try {
             // Conversion de l'ID du département en entier
             //formulaireData.departement = Number(this.serviceForm.get('departement_id')?.value);

@@ -8,6 +8,8 @@ import { RoleComponent } from './pages/role/role.component';
 import { UserComponent } from './pages/user/user.component';
 import { DepartementComponent } from './pages/departement/departement.component';
 import { TypeIncidentComponent } from './pages/type_incident/type_incident.component';
+import { IncidentSignalerComponent } from './pages/incident/incident.signaler/incident.signaler.component';
+import { IncidentComponent } from './pages/incident/incident.component';
 
 
 export const routes: Routes = [
@@ -24,6 +26,8 @@ export const routes: Routes = [
             {path:"departements", component: DepartementComponent},
             {path:"services", component: ServiceComponent},
             {path:"typeIncidents", component: TypeIncidentComponent},
+            {path:"signalerIncident", component: IncidentSignalerComponent},
+            {path:"incidents", component: IncidentComponent},
         ],
         canActivate: [authGuard]
     },
