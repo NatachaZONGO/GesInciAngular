@@ -9,13 +9,19 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { SidebarModule } from 'primeng/sidebar';
-import { Incident } from './incident.model';
+import { AllPrioriteIncident, AllStatutsIncident, Incident } from './incident.model';
 import { TypeIncidentService } from '../type_incident/type_incident.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { IncidentService } from './incident.service';
+import { UserSelectorComponent } from '../user/user_selector/user_selector.component';
+import { User } from '../user/user.model';
+import { ActivatedRoute } from '@angular/router';
+import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -39,56 +45,79 @@ import { IncidentService } from './incident.service';
         ToastModule,
         ConfirmPopupModule,
         DropdownModule,
+        UserSelectorComponent,
+        SplitButtonModule,
+        RadioButtonModule,
+        CommonModule,
         ]
 })
 export class IncidentComponent implements OnInit {
 @ViewChild ('dt') dt! : Table;  
 
+    
     incidents = signal<Incident[]>([]);//liste de tout les incidents
     incidentForm!: FormGroup;//formulaire pour créer et update un incident
     isLoading = signal(false);//booléen pour afficher le loading
-    showFormulaire = signal(false);//ce booléen indique si on doit afficher le formulaire
-    
-    visible: boolean = false;
+    showFormulaire = signal(false);//ce booléen indique si on \doit afficher le formulaire
+    selectedIncident = signal<Incident|undefined>(undefined)
 
-    showInciDetails() {
+    
+    incidentId!: number;  // ID de l'incident à commenter
+    showInciDetailsDialog = signal<boolean>(false);
+    showSelectUserDialog = signal<boolean>(false);
+
+    visible: boolean = false;
+    visiblePriorite: boolean = false;
+    visibleStatut: boolean = false;
+    prioriteIncident = AllPrioriteIncident;
+    statutIncident = AllStatutsIncident;
+
+
+    showInciDetails(incident: Incident) {
+        this.selectedIncident.set(incident);
+        this.showInciDetailsDialog.set(true);
+    }
+
+    selectUser(incident: Incident){
+        this.selectedIncident.set(incident);
+        this.showSelectUserDialog.set(true);
+    }
+
+    showCommentDialog() {
         this.visible = true;
+    }
+
+    showPrioriteDialog(incident: Incident) {
+        this.selectedIncident.set(incident); // On s'assure de définir l'incident sélectionné
+        this.incidentId = incident.id; // Assigne l'ID de l'incident sélectionné
+        this.visiblePriorite = true;this.visiblePriorite = true;
+    }
+
+    showStatutDialog(incident: Incident) {
+        this.selectedIncident.set(incident); // On s'assure de définir l'incident sélectionné
+        this.incidentId = incident.id; // Assigne l'ID de l'incident sélectionné
+        this.visibleStatut = true;
     }
 
     constructor(
         private fb: FormBuilder,
-        private IncidentService: IncidentService, //service qui est charger de la communication avec l'api
+        private incidentService: IncidentService, //service qui est charger de la communication avec l'api
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
+        private route: ActivatedRoute,
         
     ) {}
 
-        ngOnInit(): void {
-        this.initForm();
+      ngOnInit(): void {
         this.initData().then();
-    }
-
-    /**
-     * Cette fonction initalise le formulaire
-     */
-    initForm(): void{
         this.incidentForm = this.fb.group({
-            //comme aucun incident normale n'a le id -1, en fesant cela ca me permet de savoir
-            //si le formulaire contient les infos d'un rôle ou pas
-            id: [-1],
-            nom: ["", Validators.required],
-            type_incident_id: ["", Validators.required],
-            service_id: ["", Validators.required],
-            description: ["", Validators.required],
-            soumis_par: [""],
-            date_soumission: [""],
-            prise_en_charge_par: [""],
-            date_prise_en_charge: [""],
-            statut: [""],
-            commentaire: [""],
-        });
+            statut: ['', Validators.required],
+            priorite: ['', Validators.required],
+            commentaire: ['', Validators.required]  // Champ pour le commentaire
+          });
+          
     }
-
+    
     /**
      * Cette fonction récupère tout les incidents du backend
      */
@@ -96,7 +125,7 @@ export class IncidentComponent implements OnInit {
         this.isLoading.set(true);//permet d'afficher le loading
         try {
             this.incidents.set(
-                await this.IncidentService.getAll() as Incident[]
+                await this.incidentService.getAll() as Incident[]
             );
         } catch (error) {
             console.log(error);
@@ -111,18 +140,11 @@ export class IncidentComponent implements OnInit {
      * @param incident 
      */
     update(incident: Incident){
+        this.incidentId = incident.id;
+         console.log('Incident ID:', this.incidentId); 
         //remplissage
         this.incidentForm.patchValue({
-            id: incident.id,
-            nom: incident.nom,
-            type_incident_id: incident.type_incident_id,
-            service_id: incident.service_id,
-            description: incident.description,
-            soumis_par: incident.soumis_par,
-            date_soumission: incident.date_soumission,
-            prise_en_charge_par: incident.prise_en_charge_par,
-            date_prise_en_charge: incident.date_prise_en_charge,
-            statut: incident.statut,
+            priorite: incident.priorite,
             commentaires: incident.commentaires
         });
         //déclenchement de l'affichage du formulaire
@@ -133,12 +155,11 @@ export class IncidentComponent implements OnInit {
      * Fonction chargée de la création et de la mise à jour du formulaire
      */
 
-
 async deleteIncident(incidentToDelete: Incident){
     this.isLoading.set(true);
     try {
         //Attente de la suppression au backend
-        await this.IncidentService.delete(incidentToDelete.id);
+        await this.incidentService.delete(incidentToDelete.id);
         //suppression dans notre tableau
         this.incidents.update(val => {
             //cette fonction filtre et retourne tout les incidents ou : incident.id!=incidentToDelete.id
@@ -152,8 +173,6 @@ async deleteIncident(incidentToDelete: Incident){
         this.isLoading.set(false);
     }
 }
-
-
     /**
      * Cette fonction remet le formulaire a son état initiale et le ferme
      */
@@ -169,6 +188,7 @@ async deleteIncident(incidentToDelete: Incident){
             prise_en_charge_par: "",
             date_prise_en_charge: "",
             statut: "",
+            priorite: "",
             commentaire: "",
         });
         this.showFormulaire.set(false);
@@ -188,6 +208,8 @@ async deleteIncident(incidentToDelete: Incident){
         );
     }
 
+    
+
     onFilter(event: Event) {
         const inputElement = event.target as HTMLInputElement;
         this.dt.filterGlobal(inputElement.value, 'contains');
@@ -201,10 +223,105 @@ async deleteIncident(incidentToDelete: Incident){
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
                 this.deleteIncident(incidentToDelete);
-            },
-            
+            },     
         });
     }
+    async onUserSelected(user: User){
+        console.log("onUserSelected");
+        //await this.IncidentService.affecter(user, this.selectedIncident());
+        const incident = this.selectedIncident(); // Récupère l'incident sélectionné
+        if (incident) {
+            try {
+                const response = await this.incidentService.affecter(user.id, incident.id);
+                console.log('Affectation effectué' ,response);
+                this.messageService.add({severity:'success', summary: 'Succès', detail: 'Incident affecté avec succès', life: 3000});
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }    
+        console.log(event);
+    }
+
+    //Composant pour ajouter un commentaire d'un incident mettre dans le champ commentaire d'un incident
+
+   // Méthode pour enregistrer le commentaire
+   saveComment() {
+    if (this.incidentForm.valid && this.incidentId) {
+      const commentaire = this.incidentForm.get('commentaire')?.value;
+      console.log('Incident ID:', this.incidentId);
+      console.log('Commentaire:', commentaire);
+      // Appel à l'API pour mettre à jour le commentaire
+      this.incidentService.addComment(this.incidentId, commentaire).then(response => {
+        console.log('Commentaire ajouté avec succès:', response);
+        this.visible = false;  // Ferme la boîte de dialogue após la soumission
+      }).catch(error => {
+        console.error('Erreur lors de l\'ajout du commentaire:', error);
+      });
+    } else {
+      console.log('Formulaire invalide ou ID d\'incident manquant');
+    }
+  } 
 
 
+  async updateIncident(id: number) {
+    try {
+        const incident = await this.incidentService.getIncidentById(id);
+        if (incident) {
+            this.incidentId = incident.id;  // Assigner l'ID
+            this.incidentForm.patchValue({
+                priorite: incident.priorite,
+                commentaire: incident.commentaire
+            });
+            this.showFormulaire.set(true);
+        } else {
+            console.error('Incident non trouvé pour l\'ID:', id);
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'incident:', error);
+    }
+
+}
+
+  /**
+     * Fonction pour sauvegarder la priorité
+     */
+  async savePriorite() {
+    console.log('Incident ID:', this.incidentId);
+    console.log('Priorité:', this.incidentForm.get('priorite')?.value);
+    if (this.incidentForm.get('priorite')?.valid && this.incidentId) {
+        const priorite = this.incidentForm.get('priorite')?.value;
+        try {
+            await this.incidentService.updatePriority(this.incidentId, priorite); // Utilise l'ID de l'incident pour la mise à jour
+            this.messageService.add({severity:'success', summary: 'Succès', detail: 'Priorité mise à jour avec succès', life: 3000});
+            this.visiblePriorite = false; // Ferme le dialogue après la mise à jour
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour de la priorité:', error);
+            this.messageService.add({severity:'error', summary: 'Erreur', detail: 'Une erreur est survenue', life: 3000});
+        }
+    } else {
+        console.log('Formulaire invalide ou ID d\'incident manquant');
+    }
+    
+}
+
+async saveStatut() {
+    console.log('Incident ID:', this.incidentId);
+    console.log('Statut:', this.incidentForm.get('statut')?.value);
+    if (this.incidentForm.get('statut')?.valid && this.incidentId) {
+        const statut = this.incidentForm.get('statut')?.value;
+        try {
+            await this.incidentService.updateStatut(this.incidentId, statut); // Utilise l'ID de l'incident pour la mise à jour
+            this.messageService.add({severity:'success', summary: 'Succès', detail: 'Statut mis à jour avec succès', life: 3000});
+            this.visibleStatut = false; // Ferme le dialogue après la mise à jour
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du statut:', error);
+            this.messageService.add({severity:'error', summary: 'Erreur', detail: 'Une erreur est survenue', life: 3000});
+        }
+    } else {
+        console.log('Formulaire invalide ou ID d\'incident manquant');
+    }
+
+}
+  
 }

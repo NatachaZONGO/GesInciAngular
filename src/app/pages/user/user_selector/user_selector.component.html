@@ -1,0 +1,47 @@
+<p-dialog header="Choix du user"  [(visible)]="visible" [modal]="true" [draggable]="false" [resizable]="false">
+    <p-table 
+    [value]="users()" 
+    [(selection)]="selectedUsers" 
+    [loading]="isLoading()"
+    dataKey="id" 
+    selectionMode="single"
+    [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 4rem">
+                    @if(!isSingle()){
+                        <p-tableHeaderCheckbox />
+                    }
+                </th>
+                <th>Utilisateur</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>
+                    @if(isSingle()){
+                        <p-tableRadioButton [value]="user" />
+                    }@else{
+                        <p-tableCheckbox [value]="user" />
+                    }
+                </td>
+                <td>{{user.prenom}} {{user.nom}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+        <p-button 
+            [disabled]="isLoading()"
+            label="Annuler" 
+            [text]="true" 
+            severity="secondary" 
+            (onClick)="visible.set(false)" />
+        <p-button 
+            [disabled]="isLoading()"
+            label="Confirmer" 
+            [outlined]="true" 
+            severity="secondary" 
+            (onClick)="confirmerSelection()" 
+          />
+    </ng-template>
+</p-dialog>

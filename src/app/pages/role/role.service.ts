@@ -43,4 +43,17 @@ export class RoleService {
         );
     }
 
+    //service pour afficher les utilisateurs d'un role specifique
+    getUsersByRole(id: number): Promise<any>{
+        return firstValueFrom(
+            this.http.get<any>(`${this.roleUrl}_/getUsersByRole/${id}`)
+        );
+    }
+
+    getRoleByName(nom: string): Promise<Role>{
+        return firstValueFrom(
+            this.http.get<Role>(`${BACKEND_API_URL}/roleByName/${nom}`)
+        );
+    }
+
 }

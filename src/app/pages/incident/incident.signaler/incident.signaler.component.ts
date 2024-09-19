@@ -2,7 +2,7 @@ import { TypeIncident } from './../../type_incident/type_incident.model';
 import { AllPrioriteIncident, Incident, IncidentStatut } from './../incident.model';
 import { ServiceService } from './../../service/service.service';
 import { IncidentService } from './../incident.service';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, effect, Input, input, OnInit, signal } from '@angular/core';
 import { IncidentComponent } from '../incident.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DragDropModule } from 'primeng/dragdrop';
@@ -20,6 +20,7 @@ import { Service } from '../../service/service.model';
 import { TypeIncidentService } from '../../type_incident/type_incident.service';
 import { SelectServiceComponent } from '../../service/select_service/select_service.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-incident.signaler',
@@ -49,7 +50,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 })
 export class IncidentSignalerComponent implements OnInit {
-
     formulaireIncident!: FormGroup;
     //typesIncidents = [];
     services: { label: string, value: number }[] = [];
@@ -61,7 +61,7 @@ export class IncidentSignalerComponent implements OnInit {
     ];
     isLoading = false;
     service = signal<Service|undefined>(undefined);
-
+    id: number|undefined;
 
   constructor(
     private fb: FormBuilder, 
@@ -69,28 +69,41 @@ export class IncidentSignalerComponent implements OnInit {
     private serviceService: ServiceService,
     private typeIncidentService: TypeIncidentService,
     private messageService: MessageService,
-
+    private avtivatedRoute: ActivatedRoute
 ) {}
 
-  ngOnInit() {
+  ngOnInit() {    
     this.formulaireIncident = this.fb.group({
       nom: ['', [Validators.required, Validators.maxLength(255)]],
       description: ['', [Validators.maxLength(255)]],
       type_incident_id: ['', [Validators.required]],
+      service_id: ['', [Validators.required]],
       //priorite: ['', [Validators.required]],
     });
-
-    // Chargement des types incident depuis l'API
-    this.typeIncidentService.getAll().then((res) => {
-      console.log('Type incidents:', res);
-      if (res && Array.isArray(res)) {
-          this.typesIncidents = res; // Assigner les départements si les données sont valides
-      } else {
-          this.typesIncidents = []; 
-      }
-  }).catch((error) => {
+    this.isLoading = true;
+    this.id = this.avtivatedRoute.snapshot.params['id'] as number|undefined;
+    this.init(this.id).catch((error) => {
       console.error('Erreur lors du chargement des départements', error);
+  }).finally(() => {
+    this.isLoading = false;
   });
+}
+
+async init(id: number|undefined) {
+  if(id){
+    const incident = await this.incidentService.getIncidentSpecifique(id);
+    this.formulaireIncident.patchValue(
+      {
+        "nom": incident.nom,
+        "description": incident.description,
+        "type_incident_id": incident.type_incident.id,
+        "service_id": incident.service?.id
+      }
+    );
+    this.service.set(incident.service);
+  }
+  this.typesIncidents = await this.typeIncidentService.getAll();
+
 }
     
 
@@ -101,14 +114,27 @@ export class IncidentSignalerComponent implements OnInit {
     
     this.isLoading = true;
     try {
-      const incident = {
+      if(this.id == undefined){
+        const incident = {
           nom: formulaireData.nom,
           description: formulaireData.description,
           type_incident_id:formulaireData.type_incident_id,
           //priorite: formulaireData.priorite,
           service_id: this.service()?.id as number,
       };
-      const savedIncident = await this.incidentService.create(incident);
+        const savedIncident = await this.incidentService.create(incident);
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Incident enregistr  avec succ s', life: 3000 });
+      }else{
+        await this.incidentService.update(this.id, formulaireData); 
+        const savedIncident = await this.incidentService.getIncidentSpecifique(this.id);
+        this.service.update(currentService => {
+          if (savedIncident.service) {
+            return savedIncident.service;
+          }
+          return currentService;
+        }); 
+        //const savedIncident = await this.incidentService.update(this.id, incident);
+      }
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Incident enregistr  avec succ s', life: 3000 });
       this.formulaireIncident.reset();
     } catch (error) {
@@ -118,7 +144,7 @@ export class IncidentSignalerComponent implements OnInit {
 
     this.isLoading = false;
   }
- 
-  }
+
+}
 
   

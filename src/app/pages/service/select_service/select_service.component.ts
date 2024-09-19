@@ -1,5 +1,5 @@
 import { Service } from './../service.model';
-import { Component, model, NgModule, OnInit, signal } from '@angular/core';
+import { Component, Input, model, NgModule, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { DepartementComponent } from '../../departement/departement.component';
@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
         InputTextModule,
     ],
 })
-export class SelectServiceComponent implements OnInit {
+export class SelectServiceComponent implements OnInit, OnChanges {
     //service = model.required<Service>();
     service = model.required<Service|undefined>();
     departements=signal<{ label: string, value: Departement }[]>([]);
@@ -32,6 +32,19 @@ export class SelectServiceComponent implements OnInit {
 
     ngOnInit(): void { 
         this.initData().then(r => console.log(r));
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes);
+        const serviceChange = changes["service"];
+        if(serviceChange.previousValue == undefined){
+            const currentService = serviceChange.currentValue as Service;
+            if(currentService){
+                const departement = this.findDepartementByID(currentService.departement_id);
+                this.selectedDepartement.set(departement?.value);
+                this.onDepartementChange();
+            }
+        }
     }
 
 //fonction pour charger les données de departements avec les services
@@ -59,5 +72,7 @@ export class SelectServiceComponent implements OnInit {
     }
     //fonction pour recuperer les service du departement selectionne et les mettre dans la constante selectedDepartement puis dans la dropdown services
     
-
+    findDepartementByID(id: number): { label: string, value: Departement }|undefined {
+        return this.departements().find(d => d.value.id === id);
+    }
 }

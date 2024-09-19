@@ -1,10 +1,9 @@
 <div class="card" style="max-width: 900px; margin: 2rem auto; padding: 2rem; border: 2px solid #d9dce0; border-radius: 10px; box-shadow: 0 4px 8px rgba(81, 81, 81, 0.1);">
-    
+
     <!-- Logo SONABEL -->
     <div style="text-align: left; margin-bottom: 1.5rem;">
         <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 150px;">
     </div>
-    
     <div style="text-align: center;">
         <h5 style="margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;">
             <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
@@ -15,10 +14,8 @@
             <span>Entrez les informations de l'incident</span>
         </h5>
     </div>
-    
     <form (ngSubmit)="save()" [formGroup]="formulaireIncident">
         <div class="p-fluid formgrid grid">
-            
             <!-- Colonne gauche -->
             <div class="col-6">
                 <!-- Champ Nom de l'incident -->
@@ -28,7 +25,6 @@
                         <label for="nom">Nom de l'incident</label>
                     </p-floatLabel>
                 </div>
-
                 <div class="field col-12" style="margin-bottom: 1.5rem;">
                     <p-dropdown
                         [options]="typesIncidents"
@@ -36,13 +32,12 @@
                         optionLabel="nom"  
                         optionValue="id"
                         placeholder="Sélectionner le type de l'incident"
-                        [style]="{width: '100%'}"
-                    ></p-dropdown>
+                        [style]="{width: '100%'}">
+                    </p-dropdown>
                 </div>
             </div>
             <!-- Colonne droite (Description) -->
             <div class="col-6">
-                
                 <div class="field" style="margin-bottom: 1.5rem; height: 100%;">
                     <p-floatLabel>
                         <textarea id="description" pInputTextarea rows="9" formControlName="description" style="width: 100%;"></textarea>
@@ -53,8 +48,7 @@
             <app-select-service [(service)]="service"></app-select-service>
             <!-- Bouton de soumission -->
             <div class="col-12" style="text-align: right;">
-                <p-button type="submit" label="Soumettre" 
-                          [style]="{'width': '120px', 'height': '30px', 'font-size': '14px'}"></p-button>
+                <p-button type="submit" label="Soumettre" [style]="{'width': '120px', 'height': '30px', 'font-size': '14px'}"></p-button>
             </div>      
         </div>  
     </form>

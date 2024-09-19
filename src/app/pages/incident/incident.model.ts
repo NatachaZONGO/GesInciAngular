@@ -1,14 +1,19 @@
+import { Service } from "../service/service.model"
+import { TypeIncident } from "../type_incident/type_incident.model"
+import { User } from "../user/user.model"
+
 export interface Incident {
     id: number,
     nom: string,
     type_incident_id: number,
-    tye_incident: string,
+    type_incident: TypeIncident,
     description: string,
     priorite: string,
     service_id: number,
-    soumis_par: string,
+    service: Service,
+    soumis_par: User,
     date_soumission: Date,
-    prise_en_charge_par: string,
+    prise_en_charge_par: User,
     date_prise_en_charge: Date,
     statut: string,
     commentaires: string, 
@@ -23,7 +28,7 @@ export const AllPrioriteIncident = {
     FORTE: {label: 'Forte', value: 'forte'},
 }
 
-export const AllPrioritesTATUS = {
+export const AllStatutsIncident = {
     FAIBLE: {label: 'En cours', value: 'en_cours'},
     MOYENNE: {label: 'Traite', value: 'traite'},
     FORTE: {label: 'Annule', value: 'annule'},
