@@ -1,11 +1,14 @@
+<body>
+    
 <div class="login-container">
     <app-loading [(isLoading)]="isLoading"/>
-    <div style="text-align: center;">
-        <h5 style="margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;">
+    <div style="text-align: center; flex-grow: 1;">
+        <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 120px; margin-bottom: 0.3rem;">
+        <h5 style="margin-top: 0.2rem; font-size: 1.5rem;">
             <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
         </h5>
     </div>
-    <h5>Connexion</h5>
+    <h3>Connexion</h3>
     <form (ngSubmit)="connexion()" [formGroup]="formulaireconnexion">
         <div class="field col-12">
             <p-floatLabel>
@@ -19,11 +22,9 @@
                 <label for="password">Mot de passe</label>
             </p-floatLabel>
         </div>
-        <div class="forgot-password">
-            <a href="#" (click)="onForgotPassword()">Mot de passe oublié ?</a>
-        </div>
         <div class="field col-12">  
             <p-button type="submit" label="Connexion" [disabled]="formulaireconnexion.invalid"></p-button>
         </div>
     </form>
 </div>
+</body>

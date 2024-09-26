@@ -6,19 +6,18 @@
     <div class="flex align-items-center justify-content-between">
         <h4 style="color: rgb(74, 183, 237);" class="m-0">Liste des incidents</h4>
         <span class="p-input-icon-left">
-            <i class="pi pi-search pi pi-spinner pi-spin" ></i>
-            <input 
-                pInputText 
-                type="text"  
-                placeholder="Search..."
-                (input)="onFilter($event)"/>
+            <i class="pi pi-search pi-spin" ></i>
+            <input pInputText type="text"  placeholder="Search..." (input)="onFilter($event)"/>
         </span>
+        <p-dropdown [options]="prioriteOptions" [(ngModel)]="selectedPriorite" placeholder="Trier par priorite" (onChange)="filterByPriorite($event.value)"></p-dropdown>
+        <p-dropdown [options]="statutOptions" [(ngModel)]="selectedStatut" placeholder="Sélectionnez un statut" (onChange)="filterByStatut($event.value)"></p-dropdown>
     </div>
+    
     <!--
         Composant table voir primeNG: https://primeng.org/table 
     -->
     <p-table #dt 
-        [value]="incidents()"
+        [value]="filteredIncidents"
         styleClass="p-datatable-striped" 
         [paginator]="true"
         [rows]="5"
@@ -31,7 +30,6 @@
                 <th>Service</th>
                 <th>Status</th>
                 <th>Priorite</th>
-                <th>Description</th>
                 <th></th>
             </tr>
         </ng-template>
@@ -40,18 +38,46 @@
                 <td>{{incident.nom}}</td>
                 <td>{{incident.type_incident.nom}}</td>
                 <td>{{incident.service.nom}}</td>
-                <td>{{incident.statut}}</td>
-                <td>{{incident.priorite}}</td>
-                <td>{{incident.description}}</td>
+                <td>
+                    @switch (incident.statut) {
+                        @case ('en_cours') {
+                            <p-badge value="En cours.." severity="info"/>
+                        }
+                        @case ('traite') {
+                            <p-badge value="Traité" severity="success"/>
+                        }
+                        @case ('cree') {
+                            <p-badge value="Crée" severity="danger"/>
+                        }
+                    }
+                </td>
+                <td>
+                    @switch (incident.priorite) {
+                        @case ('faible') {
+                            <p-badge value="Faible" severity="info" />
+                        }
+                        @case ('moyenne') {
+                            <p-badge value="Moyenne" severity="warning" />
+                        }
+                        @case ('forte') {
+                            <p-badge value="Forte" severity="danger" />
+                        }
+                        @default {
+                            -
+                        }
+                    }
+                </td>
                 <td class="flex flex-wrap gap-2">
                     <!--Bouttons d'action voir incident.component.ts pour les fonctions -->
-                    <p-button (click)="update(incident) ;showCommentDialog()" icon="pi pi-twitch" [outlined]="true"  [rounded]="true" severity="success" title="Gerer l'incident"/>
-                    <p-button (click)="showPrioriteDialog(incident)" icon="pi pi-star" [outlined]="true"  [rounded]="true" severity="warning" title="Prioriter l'incident"/>
-                    <p-button (click)="showStatutDialog(incident)" icon="pi pi-check" [outlined]="true"  [rounded]="true" severity="info" title="Traiter l'incident"/>
-                    <p-button (click)="update(incident)" icon="pi pi-pencil" [outlined]="true"  [rounded]="true" severity="info" />
-                    <p-button icon="pi pi-eye" [outlined]="true" [rounded]="true" severity="info" (onClick)="showInciDetails(incident)" title="Voir details"/>
-                    <p-button icon="pi pi-user" [outlined]="true" [rounded]="true" severity="info" (onClick)="selectUser(incident)" title="Affecter la gestion a un agent"/>
-                    <p-button (click)="confirmDelete($event, incident) "  icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger" title="Supprimer" />
+                    <!--
+                        <p-button *canSee="['Admin']" (click)="showCommentDialog(incident)" icon="pi pi-twitch" [outlined]="true"  [rounded]="true" severity="success" pTooltip="Laisser un commentaire"/>
+                    -->
+                    <p-button *canSee="['Administrateur','Agent','Agent special']" (click)="showCommentDialog(incident)" icon="pi pi-twitch" [outlined]="true"  [rounded]="true" severity="success" pTooltip="Laisser un commentaire"/>
+                    <p-button *canSee="['Administrateur','Agent','Agent special']" (click)="showPrioriteDialog(incident)" icon="pi pi-star" [outlined]="true"  [rounded]="true" severity="warning" pTooltip="Modifier la priorite"/>
+                   <!-- <p-button (click)="showStatutDialog(incident)" icon="pi pi-check" [outlined]="true"  [rounded]="true" severity="info" pTooltip="Modifier le status"/>-->
+                    <p-button icon="pi pi-eye" [outlined]="true" [rounded]="true" severity="info" (onClick)="showInciDetails(incident)" pTooltip="Voir les details"/>
+                    <p-button *canSee="['Administrateur','Agent special']" icon="pi pi-user" [outlined]="true" [rounded]="true" severity="info" (onClick)="selectUser(incident)" pTooltip="Affecter la gestion a un agent"/>
+                    <p-button (click)="confirmDelete($event, incident) "  icon="pi pi-trash" [outlined]="true"  [rounded]="true" severity="danger"pTooltip="Supprimer l'incident" />
                 </td>
             </tr>
         </ng-template>
@@ -60,89 +86,167 @@
 
     <p-dialog header="Détails"  [(visible)]="showInciDetailsDialog" [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
         [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
-            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; padding: 20px;">
-                <div style="width: 45%; padding-right: 10px;">
-                               <p>
-                                   <strong>Nom :</strong> {{selectedIncident()?.nom}}
-                               </p>
-                               <p>
-                                   <strong>Soumis par :</strong> {{selectedIncident()?.soumis_par?.prenom}} {{selectedIncident()?.soumis_par?.nom}} 
-                               </p>
-                               <p>
-                                   <strong>Date de soumission :</strong> {{selectedIncident()?.date_soumission}}
-                               </p>
-                           </div>
-                           <div style="width: 45%; padding-left: 10px;">
-                               <p>
-                                   <strong>Prise en charge par :</strong> {{ selectedIncident()?.prise_en_charge_par?.prenom}} {{selectedIncident()?.prise_en_charge_par?.nom}}
-                               </p>
-                               <p>
-                                   <strong>Date prise en charge :</strong> {{selectedIncident()?.date_prise_en_charge}}
-                               </p>
-                               <p>
-                                   <strong>Commentaires :</strong> {{selectedIncident()?.commentaires}}
-                               </p> 
-                           </div>
-                       </div>
-                   
-                   </p-dialog>
-
-                   <p-dialog header="Commentaires" [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
-                    <span class="p-text-secondary block mb-5">
-                        Laisser un commentaire de la prise en charge de l'incident
-                    </span>
-                
-                    <form [formGroup]="incidentForm" (ngSubmit)="saveComment()">
-                        <div class="flex align-items-center gap-3 mb-5">
-                            <label for="commentaire" class="font-semibold w-6rem">Commentaire</label>
-                            <textarea
-                                id="commentaire"
-                                formControlName="commentaire"                 
-                                class="p-inputtext p-component w-full"
-                                placeholder="Écrire un commentaire">
-                            </textarea>
-                        </div>
-                
-                        <div class="flex justify-content-end gap-2">
-                            <p-button label="Annuler" severity="secondary" (click)="visible = false"></p-button>
-                            <p-button label="Enregistrer" severity="info" type="submit"></p-button>
-                        </div>
-                    </form>
-                </p-dialog>
-          <!--.......................................... p-dialog pour la gestion des priorités............................................. -->
-           <p-dialog header="Priorite" [(visible)]="visiblePriorite" [modal]="true" [style]="{ width: '25rem' }">
-            <span class="p-text-secondary block mb-5">
-                Sélectionner la priorité de l'incident :
-            </span>
-            <form [formGroup]="incidentForm" (ngSubmit)="savePriorite()">
-                <div class="flex align-items-center gap-3 mb-5">
-                    <div class="flex align-items-center" *ngFor ="let priorite of prioriteIncident | keyvalue">
-                        <p-radioButton name="priorite" [value]="priorite.value.value" formControlName="priorite" [inputId]="'priorite'+priorite.key"></p-radioButton>
-                        <label [for]="'priorite'+priorite.key" class="ml-2">{{priorite.value.value}}</label>
-                    </div>
-                </div>  
-                <div class="flex justify-content-end gap-2">
-                    <p-button label="Annuler" severity="secondary" (click)="visiblePriorite = false"></p-button>
-                    <p-button label="Enregistrer" severity="info" type="submit"></p-button>
+            <div class="flex flex-wrap gap-4">
+                <div>
+                    <p-inputGroup>
+                        <p-inputGroupAddon>Nom</p-inputGroupAddon>
+                        <input [disabled]="true" [value]="selectedIncident()?.nom" type="text" pInputText />
+                    </p-inputGroup>
                 </div>
-            </form>
-        </p-dialog>    
+                <div class="border border-1 border-400 border-round-lg px-4 py-2 text-center">
+                    Soumis par <span class="font-bold">{{selectedIncident()?.soumis_par?.prenom}} {{selectedIncident()?.soumis_par?.nom}}</span> le <span class="font-bold">{{selectedIncident()?.date_soumission}}</span>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Type de l'incident</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.type_incident?.nom" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Service</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.service?.nom" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Status</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.statut" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Priorite</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.priorite" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Prise en charge par</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.prise_en_charge_par?.prenom ?? 'Non defini'" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                    <div class="field col">
+                        <p-inputGroup>
+                            <p-inputGroupAddon>Date de resolution</p-inputGroupAddon>
+                            <input [disabled]="true" [value]="selectedIncident()?.date_prise_en_charge ?? 'Non resolu'" type="text" pInputText />
+                        </p-inputGroup>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-column">
+                <label for="float-input-detail">Description</label>
+                <textarea 
+                    [disabled]="true"
+                    [value]="selectedIncident()?.description"
+                    id="float-input-detail" 
+                    rows="3" cols="15" 
+                    pInputTextarea>
+                </textarea>
+            </div>   
+            <div class="mt-4 flex flex-column">
+                <label for="float-input-detail">Commentaire</label>
+                <textarea 
+                    [disabled]="true"
+                    [value]="selectedIncident()?.commentaires"
+                    id="float-input-detail" 
+                    rows="5" cols="30" 
+                    pInputTextarea>
+                </textarea>
+            </div>           
+    </p-dialog>
+<!--........................................................p-dialog commentaire....................................................-->
+<p-dialog [(visible)]="visibleCommentDialog" [modal]="true" [style]="{ width: '28rem' }" [closable]="true" showHeader="true">
+    <ng-template pTemplate="header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Logo et GesInci -->
+            <div style="text-align: center; flex-grow: 1;">
+                <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 120px; margin-bottom: 0.3rem;">
+                <h5 style="margin-top: 0.2rem; font-size: 1.5rem;">
+                    <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
+                </h5>
+            </div>
+            <!-- Bouton X pour fermer -->
+            <button type="button" pButton icon="pi pi-times" (click)="visibleCommentDialog = false" 
+                    style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer;">
+            </button>
+        </div>
+    </ng-template>
+
+    <!-- Corps du dialogue -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <span class="p-text-secondary block" style="font-size: 0.95rem; font-weight: bold; color: #333;">
+            Confirmez la prise en charge de l'incident
+        </span>
+    </div>
+
+    <!-- Section de commentaire -->
+    <div style="margin-bottom: 1rem; padding: 0 1rem;">
+        <p-floatLabel>
+            <textarea [(ngModel)]="commentaireInput" id="float-input" rows="4" cols="30" pInputTextarea 
+                style="width: 100%; border: 1px solid #ddd; padding: 0.5rem;">
+            </textarea>
+        </p-floatLabel>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="flex justify-content-end gap-2" style="padding: 0 1rem;">
+        <p-button label="Annuler" severity="secondary" (click)="visibleCommentDialog = false" 
+                  [style]="{ 'background-color': '#f44336', 'border-color': '#f44336' }">
+        </p-button>
+        <p-button (click)="saveComment()" label="Résoudre" severity="info" type="submit" 
+                  [style]="{ 'background-color': '#4CAF50', 'border-color': '#4CAF50' }">
+        </p-button>
+    </div>
+</p-dialog>
+
 
         <!-- .......................................... p-dialog pour la gestion des statuts............................................. -->
          <p-dialog header="Statut" [(visible)]="visibleStatut" [modal]="true" [style]="{ width: '25rem' }">
             <span class="p-text-secondary block mb-5">
                 Sélectionner le statut de l'incident :
             </span>
-            <form [formGroup]="incidentForm" (ngSubmit)="saveStatut()">
-                <div class="flex align-items-center gap-3 mb-5">
-                    <div class="flex align-items-center" *ngFor ="let statut of statutIncident | keyvalue">
-                        <p-radioButton name="statut" [value]="statut.value.value" formControlName="statut" [inputId]="'statut'+statut.key"></p-radioButton>
-                        <label [for]="'statut'+statut.key" class="ml-2">{{statut.value.value}}</label>
+            <div class="flex align-items-center gap-3 mb-5">
+                @for (status of allStatus; track $index) {
+                    <div class="flex align-items-center">
+                        <p-radioButton name="status" [(ngModel)]="statusIncident" [value]="status.value" [inputId]="'status'+$index"></p-radioButton>
+                        <label [for]="'status'+$index" class="ml-2">{{status.label}}</label>
                     </div>
-                </div> 
-                <div class="flex justify-content-end gap-2">
-                    <p-button label="Annuler" severity="secondary" (click)="visibleStatut = false"></p-button>
-                    <p-button label="Enregistrer" severity="info" type="submit"></p-button>
-                </div>
-            </form>
+                }
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <p-button label="Annuler" severity="secondary" (click)="visibleStatut = false"></p-button>
+                <p-button (click)="saveStatut()" label="Enregistrer" severity="info" type="submit"></p-button>
+            </div>
+        </p-dialog>
+
+        <!-- .......................................... p-dialog pour la gestion des priorites............................................. -->
+        <p-dialog header="Priorite" [(visible)]="visiblePriorite" [modal]="true" [style]="{ width: '25rem' }">
+             <!-- Logo et GesInci -->
+             <div style="text-align: center; flex-grow: 1;">
+                <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 120px; margin-bottom: 0.3rem;">
+                <h5 style="margin-top: 0.2rem; font-size: 1.5rem;">
+                    <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
+                </h5>
+            </div>
+            <span class="p-text-secondary block mb-5">
+                Modifier la priorite :
+            </span>
+            <div class="flex align-items-center gap-3 mb-5">
+                @for (priorite of allPriorite; track $index) {
+                    <div class="flex align-items-center">
+                        <p-radioButton name="priorite" [(ngModel)]="prioriteIncident" [value]="priorite.value" [inputId]="'status'+$index"></p-radioButton>
+                        <label [for]="'priorite'+$index" class="ml-2">{{priorite.label}}</label>
+                    </div>
+                }
+            </div>
+            <div class="flex justify-content-end gap-2">
+                <p-button label="Annuler" severity="secondary" (click)="visibleStatut = false"></p-button>
+                <p-button (click)="savePriorite()" label="Enregistrer" severity="info" type="submit"></p-button>
+            </div>
         </p-dialog>

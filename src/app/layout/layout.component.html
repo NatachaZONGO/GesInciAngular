@@ -1,43 +1,56 @@
 <div class="w-screen surface-300">
     <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white header">
         <div class="flex gap-4">
-            <p-button (click)="switchMenu()" icon="pi pi-align-justify" severity="secondary" />
-            <div class="text-3xl font-bold">GesInci</div>
-        </div>
+            <p-button (click)="switchMenu()" icon="pi pi-align-justify" severity="success" ></p-button>
+            <div class="text-3xl font-bold">
+                <h5 style="margin-top: 0.2rem; font-size: 1.5rem;">
+                    <span style="color: green;">Ges</span>
+                    <span style="color: red;">Inci</span>
+                </h5>
+            </div>
+        </div>          
         <div>
-            <p-button (click)="user.toggle($event)" label="Natacha ZONGO" [text]="true" [raised]="true" severity="secondary" />
+            <div>
+                <p-button (click)="user.toggle($event)" [label]="utilisateur ? utilisateur.nom + ' ' + utilisateur.prenom : 'Invité'" [text]="true" [raised]="true" severity="secondary"></p-button>
+                <p-overlayPanel #user><p-menu [model]="userMenuItems"></p-menu></p-overlayPanel>
+              </div>
+              
             <p-overlayPanel #user>
-                <p-menu [model]="userMenuItems" />
+                <p-menu [model]="userMenuItems"></p-menu>
             </p-overlayPanel>
-        </div>
+        </div>        
     </div>
     <div class="w-full flex gap-4 corps"> 
     <div class="menuBar" [class.close]="!isMenuOpen()" >
             <p-menu [model]="items" >
                 <ng-template pTemplate="submenuheader" let-item>
-                    <span [class]="item.icon"></span> 
-                    <span class="text-primary font-bold">{{ item.label }}</span>
+                    @if (canShow(item.roles)) {  
+                        <span [class]="item.icon"></span> 
+                        <span class="text-primary font-bold">{{ item.label }}</span>
+                    }
                 </ng-template>
                 <ng-template pTemplate="item" let-item>
-                    @if(item.route){
-                        <ng-container>
-                            <a [routerLink]="item.route" class="p-menuitem-link">
+                    @if (canShow(item.roles)) {
+                        @if(item.route){
+                            <ng-container>
+                                <a [routerLink]="item.route" class="p-menuitem-link">
+                                    <span [class]="item.icon"></span>
+                                    <span class="ml-2">{{ item.label }}</span>
+                                </a>
+                            </ng-container>
+                        }@else if(item.url){
+                            <ng-template>
+                                <a [href]="item.url" class="p-menuitem-link">
+                                    <span [class]="item.icon"></span>
+                                    <span class="ml-2">{{ item.label }}</span>
+                                </a>
+                            </ng-template>
+                        }@else{
+                            <a pRipple class="flex align-items-center p-menuitem-link">
                                 <span [class]="item.icon"></span>
                                 <span class="ml-2">{{ item.label }}</span>
                             </a>
-                        </ng-container>
-                    }@else if(item.url){
-                        <ng-template #elseBlock>
-                            <a [href]="item.url" class="p-menuitem-link">
-                                <span [class]="item.icon"></span>
-                                <span class="ml-2">{{ item.label }}</span>
-                            </a>
-                        </ng-template>
-                    }@else{
-                        <a pRipple class="flex align-items-center p-menuitem-link">
-                            <span [class]="item.icon"></span>
-                            <span class="ml-2">{{ item.label }}</span>
-                        </a>
+                        }
                     }
                 </ng-template>
             </p-menu>
@@ -46,4 +59,5 @@
             <router-outlet></router-outlet>
         </div>
     </div>
+   
 </div>

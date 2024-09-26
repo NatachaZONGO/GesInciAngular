@@ -91,5 +91,12 @@ export class IncidentService {
         return Promise.reject(error);
       });
   }
+
+  //Methode pour afficher les incidents qu'un utilisateur a soumis
+  getIncidentsByUser(userId: number): Promise<Incident[]> {
+    return firstValueFrom(
+      this.http.get<Incident[]>(`${this.incidentUrl}_/getIncidentsByUser/${userId}`)
+    );
+  }
   
 }

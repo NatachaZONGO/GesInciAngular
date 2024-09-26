@@ -1,3 +1,4 @@
+import { AuthService } from './../../../auth/auth.service';
 import { TypeIncident } from './../../type_incident/type_incident.model';
 import { AllPrioriteIncident, Incident, IncidentStatut } from './../incident.model';
 import { ServiceService } from './../../service/service.service';
@@ -69,7 +70,9 @@ export class IncidentSignalerComponent implements OnInit {
     private serviceService: ServiceService,
     private typeIncidentService: TypeIncidentService,
     private messageService: MessageService,
-    private avtivatedRoute: ActivatedRoute
+    private avtivatedRoute: ActivatedRoute,
+    private authService: AuthService,
+    
 ) {}
 
   ngOnInit() {    
@@ -121,6 +124,7 @@ async init(id: number|undefined) {
           type_incident_id:formulaireData.type_incident_id,
           //priorite: formulaireData.priorite,
           service_id: this.service()?.id as number,
+          statut: 'cree',
       };
         const savedIncident = await this.incidentService.create(incident);
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Incident enregistr  avec succ s', life: 3000 });

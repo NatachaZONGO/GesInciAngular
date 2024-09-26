@@ -29,7 +29,8 @@ export const AllPrioriteIncident = {
 }
 
 export const AllStatutsIncident = {
+    FORTE: {label: 'Cree', value: 'Cree'},
     FAIBLE: {label: 'En cours', value: 'en_cours'},
     MOYENNE: {label: 'Traite', value: 'traite'},
-    FORTE: {label: 'Annule', value: 'annule'},
+   
 }

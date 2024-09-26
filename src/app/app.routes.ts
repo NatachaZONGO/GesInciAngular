@@ -10,10 +10,10 @@ import { DepartementComponent } from './pages/departement/departement.component'
 import { TypeIncidentComponent } from './pages/type_incident/type_incident.component';
 import { IncidentSignalerComponent } from './pages/incident/incident.signaler/incident.signaler.component';
 import { IncidentComponent } from './pages/incident/incident.component';
+import { DaschboardComponent } from './layout/dashboard/daschboard.component';
 
 
 export const routes: Routes = [
-
 
 
     {   
@@ -21,6 +21,7 @@ export const routes: Routes = [
         path: "",
         component: LayoutComponent, 
         children: [ 
+            {path:"" , component : DaschboardComponent},
             {path: "roles", component: RoleComponent},
             {path:"users", component: UserComponent},
             {path:"departements", component: DepartementComponent},
