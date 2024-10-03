@@ -1,8 +1,16 @@
+import { ButtonModule } from 'primeng/button';
 import { Component, ElementRef, OnInit, signal, ViewChild, viewChild } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { AllStatutsIncident } from '../../pages/incident/incident.model';
 import { Chart, scales } from 'chart.js';
 import { IncidentService } from '../../pages/incident/incident.service';
+import { MeterGroupModule } from 'primeng/metergroup';
+import { CommonModule } from '@angular/common';
+import { CardModule } from 'primeng/card';
+import { DepartementService } from '../../pages/departement/departement.service';
+import { ServiceService } from '../../pages/service/service.service';
+import { UserService } from '../../pages/user/user.service';
+import { RoleService } from '../../pages/role/role.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -11,6 +19,10 @@ import { IncidentService } from '../../pages/incident/incident.service';
     standalone: true,
     imports:[
         ChartModule,
+        MeterGroupModule,
+        CommonModule,
+        ButtonModule,
+        CardModule,
     ]
 })
 export class DaschboardComponent implements OnInit {
@@ -18,6 +30,7 @@ export class DaschboardComponent implements OnInit {
     dataStatut : any;
     dataPriorite : any;
     options : any;
+    value: any[] = [];
 
     @ViewChild('chartStatut') chartStatut!: ElementRef<HTMLCanvasElement>;
     @ViewChild('chartPriorite') chartPriorite!: ElementRef<HTMLCanvasElement>;
@@ -25,59 +38,14 @@ export class DaschboardComponent implements OnInit {
 
     constructor(
         private incidentService: IncidentService,
+        private departementService: DepartementService, 
+        private serviceService: ServiceService,
+        private roleService: RoleService,
     ) { }
 
     ngOnInit(): void {
         this.loadIncidentData();
-       /* const canvas = this.chartStatut();
-        console.log(canvas);
-        
-        if(canvas){
-            new Chart(canvas.nativeElement, {
-                type: 'pie',
-                data: {
-                    labels : ['Red', 'Blue', 'Green'],
-                    datasets: [{
-                        label:'# of Votes',
-                        data: [12, 19, 3],
-                        borderWidth: 1
-                    }]
-                }
-            });
-            this.options={
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        }
-
-
-       /* const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
-
-        this.dataStatut = {
-            labels: ['Cree', 'En cours', ,'Traite'],
-            datasets: [
-                {
-                    dataStatut:[540, 325, 702],
-                    backgroundColor: [documentStyle.getPropertyValue('--blue-500'), documentStyle.getPropertyValue('--yellow-500'), documentStyle.getPropertyValue('--green-500')],
-                    hoverBackgroundColor: [documentStyle.getPropertyValue('--blue-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--green-400')]
-
-                }
-            ]
-        };
-        this.options = {
-            plugins: {
-                legend: {
-                    labels: {
-                        usePointStyle: true,
-                        color: textColor
-                    }
-                }
-            }
-        };*/
+        this.loadValues();
      }
 
      // Méthode pour charger les données des incidents
@@ -214,4 +182,37 @@ this.options = {
   }
   
 
-}
+  async loadValues(): Promise<void> {
+    try {
+      // Utilisation de Promise.all pour exécuter plusieurs promesses en parallèle
+      const [departements, services, roles] = await Promise.all([
+        this.departementService.getAll(),
+        this.serviceService.getAll(),
+        this.roleService.getAll() // Récupération des rôles via RoleService
+      ]);
+
+      // Filtrer les rôles pour compter les agents maintenanciers et agents spéciaux
+      const agentsMaintenanciers = roles.filter(role => role.nom === 'Agent');
+      const agentsSpeciaux = roles.filter(role => role.nom === 'Agent special');
+
+      // Comptabilisation des éléments récupérés
+      this.value = [
+        { label: 'Départements', color1: '#1e3a8a', color2: '#3b82f6', value: departements.length, icon: 'pi pi-sitemap' },
+        { label: 'Services', color1: '#f59e0b', color2: '#fde68a', value: services.length, icon: 'pi pi-briefcase' },
+        { label: 'Agents Maintenanciers', color1: '#10b981', color2: '#6ee7b7', value: agentsMaintenanciers.length, icon: 'pi pi-users' },
+        { label: 'Agents Spéciaux', color1: '#9333ea', color2: '#c084fc', value: agentsSpeciaux.length, icon: 'pi pi-shield' }
+      ];
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  }
+
+  NombreInci = [
+    { label: 'Nombre d\'incidents du jour', color1: '#34d399', color2: '#fbbf24', value: 25, icon: 'pi pi-table' },
+    { label: 'Messages', color1: '#fbbf24', color2: '#60a5fa', value: 15, icon: 'pi pi-inbox' },
+    { label: 'Media', color1: '#60a5fa', color2: '#c084fc', value: 20, icon: 'pi pi-image' },
+    { label: 'System', color1: '#c084fc', color2: '#c084fc', value: 10, icon: 'pi pi-cog' }
+];
+
+
+}  

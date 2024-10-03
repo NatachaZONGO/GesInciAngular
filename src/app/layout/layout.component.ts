@@ -35,10 +35,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
     utilisateur: User | null = null;
     subscriptions: Subscription[] = [];
     
-   // Utilisation des signaux pour le graphique
-   // dataStatut = signal<any>(null);
-   // options = signal<any>(null);
-    
     constructor (
         private authService: AuthService,
         private router: Router,
@@ -80,8 +76,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
         ];
         this.items = [
             {
-                label: 'Dashboard',
+                label: 'logo ici',
+                command: () => {
+                    this.router.navigateByUrl('');
+                },
                 items: [
+                    {
+                        label: 'Dashboard',
+                        icon: 'pi pi-home',
+                        command: () => {
+                            this.router.navigateByUrl('');
+                        }
+                    },
                     {
                         label: 'New',
                         icon: 'pi pi-plus',
@@ -104,14 +110,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
                             this.router.navigateByUrl('incidents');
                         }
                     },
-
-                    {
-                        label:'Mes incidents',
-                        icon: 'pi pi-flag' ,
-                        command:()=>{
-                            this.router.navigateByUrl('');
-                        }
-                    }
                 ]
             },
             

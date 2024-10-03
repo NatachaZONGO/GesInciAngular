@@ -126,6 +126,7 @@ async init(id: number|undefined) {
           service_id: this.service()?.id as number,
           statut: 'cree',
       };
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Incident enregistr  avec succ s', life: 3000 });
         const savedIncident = await this.incidentService.create(incident);
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Incident enregistr  avec succ s', life: 3000 });
       }else{
