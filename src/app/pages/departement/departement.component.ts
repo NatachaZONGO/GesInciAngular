@@ -215,6 +215,8 @@ export class DepartementComponent implements OnInit {
             message: 'Etes-vous sûr de vouloir supprimer ce departement ?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui', 
+            rejectLabel: 'Non', 
             accept: () => {
                 this.deleteDepartement(departementToDelete);
             },

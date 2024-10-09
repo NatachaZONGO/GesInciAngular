@@ -1,20 +1,40 @@
-.menuBar.close{
+.menuBar.close {
     width: 0px;
     overflow: hidden;
 }
-.menuBar{
+
+.menuBar {
+    height: 100vh;
     width: 18rem;
     transition: width 0.5s ease-in-out;
 }
 
-.header{
-    height: 5rem;
+.header {
+    height: 4rem;
 }
 
- .corps{
+.header-bar {
+    background-color: rgb(38, 131, 223) !important;
+ /* Vous pouvez aussi utiliser un code hexadécimal si besoin */
+}
+
+.corps {
     position: absolute;
-    top: 5rem ;
+    top: 6rem;
     left: 0rem;
+    right: 0rem;
+    flex-direction: row;
+   
+   
+}
+.menuBar {
+    width: 15rem; /* Largeur de la barre de menu */
+}
+
+.content {
+    flex-grow: 1;
+    max-width: calc(100vw - 15rem); /* Limite à la taille de l'écran moins la largeur de la barre */
+    overflow: hidden;
 }
 
 
@@ -23,4 +43,17 @@
     border: 2px solid green;    /* Bordure verte */
     color: green;               /* Texte et icône verts */
     font-weight: bold;
+}
+.menuBar .p-menuitem-link {
+    font-size: 0.9rem; /* Taille de la police agrandie */
+    font-weight: bold;  /* Texte en gras */
+}
+
+.menuBar .p-menuitem-link .pi {
+    font-size: 1rem; /* Taille de l'icône */
+}
+
+/* Ajustements pour le padding */
+.menuBar .p-menuitem {
+    padding: 10px 15px; /* Ajustez selon vos besoins */
 }

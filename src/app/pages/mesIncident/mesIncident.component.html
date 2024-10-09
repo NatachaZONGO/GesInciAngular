@@ -4,7 +4,7 @@
     <!--Ce composant affiche le loader-->
     <app-loading [(isLoading)]="isLoading"/>
     <div class="flex align-items-center justify-content-between">
-        <h4 style="color: rgb(74, 183, 237);" class="m-0">Liste des incidents</h4>
+        <h4 style="color: rgb(74, 183, 237);" class="m-0">Liste de mes incidents</h4>
         <span class="p-input-icon-left">
             <i class="pi pi-search pi-spin" ></i>
             <input pInputText type="text"  placeholder="Search..." (input)="onFilter($event)"/>
@@ -72,7 +72,7 @@
                     <!--
                         <p-button *canSee="['Admin']" (click)="showCommentDialog(incident)" icon="pi pi-twitch" [outlined]="true"  [rounded]="true" severity="success" pTooltip="Laisser un commentaire"/>
                     -->
-                    <p-button *canSee="['Agent','Agent special']" (click)="showCommentDialog(incident)" icon="pi pi-comment" [outlined]="true"  [rounded]="true" severity="success" pTooltip="Laisser un commentaire"/>
+                    <p-button *canSee="['Administrateur','Agent','Agent special']" (click)="showCommentDialog(incident)" icon="pi pi-comment" [outlined]="true"  [rounded]="true" severity="success" pTooltip="Laisser un commentaire"/>
                     <p-button *canSee="['Administrateur','Agent','Agent special']" (click)="showPrioriteDialog(incident)" icon="pi pi-star" [outlined]="true"  [rounded]="true" severity="warning" pTooltip="Modifier la priorite"/>
                    <!-- <p-button (click)="showStatutDialog(incident)" icon="pi pi-check" [outlined]="true"  [rounded]="true" severity="info" pTooltip="Modifier le status"/>-->
                     <p-button icon="pi pi-eye" [outlined]="true" [rounded]="true" severity="info" (onClick)="showInciDetails(incident)" pTooltip="Voir les details"/>

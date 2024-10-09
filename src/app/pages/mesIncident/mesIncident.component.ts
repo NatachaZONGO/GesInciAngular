@@ -1,4 +1,4 @@
-import { Service } from './../service/service.model';
+import { Service } from '../service/service.model';
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -12,10 +12,10 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { SidebarModule } from 'primeng/sidebar';
-import { AllPrioriteIncident, AllStatutsIncident, Incident } from './incident.model';
+import { AllPrioriteIncident, AllStatutsIncident, Incident } from './mesIncident.model';
 import { TypeIncidentService } from '../type_incident/type_incident.service';
 import { DropdownModule } from 'primeng/dropdown';
-import { IncidentService } from './incident.service';
+import { IncidentService } from './mesIncident.service';
 import { UserSelectorComponent } from '../user/user_selector/user_selector.component';
 import { User } from '../user/user.model';
 import { ActivatedRoute } from '@angular/router';
@@ -30,9 +30,9 @@ import { CanSeeDirective } from '../../Share/can_see/can_see.directive';
 
 @Component({
     standalone: true,
-    selector: 'app-incident',
-    templateUrl: './incident.component.html',
-    styleUrls: ['./incident.component.scss'],
+    selector: 'app-mesincident',
+    templateUrl: './mesIncident.component.html',
+    styleUrls: ['./mesIncident.component.scss'],
     providers: [
         MessageService,
         ConfirmationService,
@@ -60,7 +60,7 @@ import { CanSeeDirective } from '../../Share/can_see/can_see.directive';
         CanSeeDirective
         ]
 })
-export class IncidentComponent implements OnInit {
+export class MesIncidentComponent implements OnInit {
 @ViewChild ('dt') dt! : Table;  
 
     
@@ -205,7 +205,7 @@ export class IncidentComponent implements OnInit {
             message: 'Etes-vous sûr de vouloir supprimer ce incident ?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Oui', 
+            acceptLabel: 'Oui', // Modifier le bouton "Yes" en "Oui"
             rejectLabel: 'Non', 
             accept: () => {
                 this.deleteIncident(incidentToDelete);

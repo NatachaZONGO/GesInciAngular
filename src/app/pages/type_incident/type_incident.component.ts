@@ -215,6 +215,8 @@ export class TypeIncidentComponent implements OnInit {
             message: 'Etes-vous sûr de vouloir supprimer ce typeIncident ?',
             header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui', // Modifier le bouton "Yes" en "Oui"
+            rejectLabel: 'Non', // Modifier le bouton "No" en "Non"
             accept: () => {
                 this.deletetypeIncident(typeIncidentToDelete);
             },

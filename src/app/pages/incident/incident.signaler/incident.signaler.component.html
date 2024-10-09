@@ -1,18 +1,17 @@
-<div class="card" style="max-width: 900px; margin: 2rem auto; padding: 2rem; border: 2px solid #d9dce0; border-radius: 10px; box-shadow: 0 4px 8px rgba(81, 81, 81, 0.1);">
+<body>
+    
+<div class="card signaler-container" style="max-width: 900px; margin: 2rem auto; padding: 2rem; border: 2px solid #d9dce0; border-radius: 10px; box-shadow: 0 4px 8px rgba(81, 81, 81, 0.1);">
 
-    <!-- Logo SONABEL -->
-    <div style="text-align: left; margin-bottom: 1.5rem;">
-        <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 150px;">
-    </div>
-    <div style="text-align: center;">
-        <h5 style="margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;">
-            <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
+    <div class="logo-container">
+        <img src="/images/logosona.png" alt="Logo SONABEL">
+        <h5 class="gesinci-title">
+          <span class="ges">Ges</span><span class="inci">Inci</span>
         </h5>
-    </div>
+      </div>
     <div style="text-align: center;">
-        <h5>
+        <h3>
             <span>Entrez les informations de l'incident</span>
-        </h5>
+        </h3>
     </div>
     <form (ngSubmit)="save()" [formGroup]="formulaireIncident">
         <div class="p-fluid formgrid grid">
@@ -31,10 +30,11 @@
                         formControlName="type_incident_id"
                         optionLabel="nom"  
                         optionValue="id"
-                        placeholder="Sélectionner le type de l'incident"
+                        placeholder="Type de l'incident"
                         [style]="{width: '100%'}">
                     </p-dropdown>
                 </div>
+                <app-select-service [(service)]="service"></app-select-service>
             </div>
             <!-- Colonne droite (Description) -->
             <div class="col-6">
@@ -45,11 +45,12 @@
                     </p-floatLabel>
                 </div>
             </div>
-            <app-select-service [(service)]="service"></app-select-service>
+           
             <!-- Bouton de soumission -->
             <div class="col-12" style="text-align: right;">
-                <p-button type="submit" label="Soumettre" [style]="{'width': '120px', 'height': '30px', 'font-size': '14px'}"></p-button>
+                <p-button type="submit" label="Soumettre" [style]="{'width': '200px', 'height': '40px', 'font-size': '14px'}"></p-button>
             </div>      
         </div>  
     </form>
 </div>
+</body>

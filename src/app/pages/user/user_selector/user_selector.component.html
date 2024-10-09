@@ -1,4 +1,4 @@
-<p-dialog header="Choix du user"  [(visible)]="visible" [modal]="true" [draggable]="false" [resizable]="false">
+<p-dialog header="Sélectionner un agent pour attribuer la gestion"  [(visible)]="visible" [modal]="true" [draggable]="false" [resizable]="false">
     <p-table 
     [value]="users()" 
     [(selection)]="selectedUsers" 
@@ -13,7 +13,7 @@
                         <p-tableHeaderCheckbox />
                     }
                 </th>
-                <th>Utilisateur</th>
+                <th>Liste des agents</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-user>

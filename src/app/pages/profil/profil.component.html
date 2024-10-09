@@ -1,0 +1,96 @@
+<!-- profil.component.html -->
+<p-toast/>
+<p-confirmPopup/>
+<div class="profile-container" *ngIf="user; else loading">
+    <div class="profile-card">
+        <h1>Mon Profil</h1>
+        <div class="profile-info">
+            <div class="info-item">
+                <p><strong>Nom:</strong> {{ user.nom }}</p>
+            </div>
+            <div class="info-item">
+                <p><strong>Prénom:</strong> {{ user.prenom }}</p>
+            </div>
+            <div class="info-item">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            </div>
+            <div class="info-item">
+                <p><strong>Fonctions:</strong></p>
+                <ul>
+                    <li *ngFor="let role of roles">{{ role.nom }}</li>
+                </ul>
+            </div>
+        </div><br>
+        <div class="button-container">
+            <button (click)="openDialog(user)">Modifier mes informations</button> <!-- Change ici -->
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <p class="loading-text">Chargement des informations de profil...</p>
+</ng-template>
+
+<!-- Formulaire de modification du profil -->
+<p-dialog [(visible)]="showFormulaire" [modal]="true" [style]="{width: '600px', overflow: 'hidden'}" [draggable]="false" [resizable]="false">
+    <div style="text-align: center;">
+        <h5 style="margin-bottom: 2rem; font-size: 1.5rem; color: #007BFF;">
+            <span style="color: green;">Ges</span><span style="color: red;">Inci</span>
+        </h5>
+    </div>
+    <form class="flex flex-column gap-4 p-4" [formGroup]="userForm">
+        <div class="p-fluid formgrid grid">
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="nom" type="text" pInputText formControlName="nom" 
+                           style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px;"
+                           onfocus="this.style.borderColor='#007BFF';" 
+                           onblur="this.style.borderColor='#ccc';"/>
+                    <label for="nom">Nom</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="prenom" type="text" pInputText formControlName="prenom" 
+                           style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px;"
+                           onfocus="this.style.borderColor='#007BFF';" 
+                           onblur="this.style.borderColor='#ccc';"/>
+                    <label for="prenom">Prenom</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col-12" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="email" type="text" pInputText formControlName="email" 
+                           style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px;"
+                           onfocus="this.style.borderColor='#007BFF';" 
+                           onblur="this.style.borderColor='#ccc';"/>
+                    <label for="email">Adresse e-mail</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="password" type="password" pInputText formControlName="password" 
+                           style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px;"
+                           onfocus="this.style.borderColor='#007BFF';" 
+                           onblur="this.style.borderColor='#ccc';"/>
+                    <label for="password">Mot de passe</label>
+                </p-floatLabel>
+            </div>
+            <div class="field col" style="margin-bottom: 1.5rem;">
+                <p-floatLabel>
+                    <input id="confirmPassword" type="password" pInputText formControlName="confirmPassword" 
+                           style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 4px;"
+                           onfocus="this.style.borderColor='#007BFF';" 
+                           onblur="this.style.borderColor='#ccc';"/>
+                    <label for="confirmPassword">Confirmer le mot de passe</label>
+                </p-floatLabel>
+            </div>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-between" style="padding: 10px;">
+            <p-button (click)="save()" label="Enregistrer" severity="success" />
+            <p-button (click)="closeForm()" label="Annuler" severity="secondary"/> 
+        </div>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,84 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #4db193;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    margin: 0;
+  }
+  
+  .signaler-container {
+    background-color: #fff;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    width: 60%;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .logo-container {
+    text-align: left;
+    margin-bottom: 1rem;
+  
+    img {
+      max-width: 120px;
+      margin-right: 10px;
+    }
+  
+    .gesinci-title {
+      font-size: 1.8rem;
+      color: #007BFF;
+      margin-top: 0.5rem;
+  
+      .ges {
+        color: green;
+      }
+  
+      .inci {
+        color: red;
+      }
+    }
+  }
+  
+  .header-text h5 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+  
+  .form-layout {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 2rem;
+  
+    .form-column {
+      width: 48%;
+  
+      .field {
+        margin-bottom: 2rem;
+      }
+    }
+  }
+  
+  .button-container {
+    text-align: right;
+  
+    p-button {
+      background-color: #007bff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+  

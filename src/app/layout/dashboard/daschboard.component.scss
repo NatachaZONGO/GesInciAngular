@@ -1,7 +1,10 @@
 .chart-container {
     border: 2px solid #ccc; /* Cadre gris clair */
     padding: 10px; /* Espace à l'intérieur du cadre */
-    width: 350px; /* Réduction de la taille */
+    position: relative; 
+    height: 350px; /* Ajustez la hauteur selon vos besoins */
+    margin: 0 auto; /* Centrer les graphiques */
+    width: 100%; 
     margin-left: 0; /* Positionner à gauche */
     background-color: #f9f9f9; /* Couleur de fond douce */
     border-radius: 8px; /* Coins arrondis */
@@ -16,4 +19,6 @@ canvas {
 
 p-chart {
     display: block; /* S'assurer que le graphique occupe toute la largeur du div */
+    margin: 0 auto; /* Centrer le graphique */
+    
 }

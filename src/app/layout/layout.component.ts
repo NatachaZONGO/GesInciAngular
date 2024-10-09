@@ -11,6 +11,8 @@ import { AllStatutsIncident } from '../pages/incident/incident.model';
 import { User } from '../pages/user/user.model';
 import { Subscription } from 'rxjs';
 import { ConnexionComponent } from '../auth/connexion/connexion.component';
+import { CommonModule } from '@angular/common';
+import { color } from 'chart.js/helpers';
 
 
 @Component({
@@ -26,6 +28,7 @@ import { ConnexionComponent } from '../auth/connexion/connexion.component';
         OverlayPanelModule,
         ToastModule,
         ChartModule,
+        CommonModule
     ]
 })
 export class LayoutComponent implements OnInit, OnDestroy {
@@ -63,23 +66,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.userMenuItems = [
           {
-            label: 'Changer de compte',
-            icon: 'pi pi-user',
+            label: 'Se deconnecter',
+            icon: 'pi pi-power-off',
            command: () => {
                this.router.navigateByUrl('login');
            }
-          },
-          {
-            label: 'New',
-            icon: 'pi pi-plus',
-          }  
+          }
         ];
         this.items = [
             {
-                label: 'logo ici',
-                command: () => {
-                    this.router.navigateByUrl('');
-                },
+               
                 items: [
                     {
                         label: 'Dashboard',
@@ -88,14 +84,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
                             this.router.navigateByUrl('');
                         }
                     },
-                    {
-                        label: 'New',
-                        icon: 'pi pi-plus',
-                        command: () => {
-                            console.log("SALUT");
-                        },
-                        roles: ['Administrateur']
-                    },
+                    {},
                     {
                         label: 'Signaler incident',
                         icon: 'pi pi-exclamation-triangle' ,
@@ -106,11 +95,24 @@ export class LayoutComponent implements OnInit, OnDestroy {
                     {
                         label: 'Les incidents',
                         icon: 'pi pi-flag' ,
+                        styleClass: 'incident-icon',
+                        roles: ['Administrateur','Agent','Agent special'],
                         command: () => {
                             this.router.navigateByUrl('incidents');
                         }
                     },
+                    {
+                        label: 'Mes incidents',
+                        icon: 'pi pi-bell',
+                        styleClass: 'mes-incidents-icon',
+                        command: () => {
+                            this.router.navigateByUrl('mesIncidents');
+                        }
+                    },
                 ]
+            },
+            {
+
             },
             
             {
@@ -152,8 +154,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
                 ]
             },
             {
+
+            },
+            {
                 label: 'Profile',
                 items: [
+                    {
+                        label: 'Mon Compte',
+                        icon: 'pi pi-user',
+                        command: () => {
+                            this.router.navigateByUrl('profil');
+                        }
+                    },
                     {
                         label: 'Logout',
                         icon: 'pi pi-sign-out',
@@ -163,6 +175,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
                         }
                     }
                 ]
+            },
+            
+            {
+                separator: true
             }
         ];
 

@@ -118,4 +118,18 @@ connexion(userConnexion: UserConnexion): Promise<any> {
             })
         )
     } 
+
+
+    getCurrentUserInfos(id: number): Observable<any> {
+        return this.http.get(`${BACKEND_API_URL}/getConnectedUserInfos`);
+    }
+    
+    getCurrentUserId(): number | null {
+        const user = localStorage.getItem('utilisateur');
+        if (user) {
+          const parsedUser = JSON.parse(user);
+          return parsedUser.id; // Assurez-vous que l'objet utilisateur a bien la propriété id
+        }
+        return null;
+      }
 }

@@ -11,6 +11,8 @@ import { TypeIncidentComponent } from './pages/type_incident/type_incident.compo
 import { IncidentSignalerComponent } from './pages/incident/incident.signaler/incident.signaler.component';
 import { IncidentComponent } from './pages/incident/incident.component';
 import { DaschboardComponent } from './layout/dashboard/daschboard.component';
+import { MesIncidentComponent } from './pages/mesIncident/mesIncident.component';
+import { ProfilComponent } from './pages/profil/profil.component';
 
 
 export const routes: Routes = [
@@ -30,6 +32,9 @@ export const routes: Routes = [
             {path:"signalerIncident/:id", component: IncidentSignalerComponent},
             {path:"signalerIncident", component: IncidentSignalerComponent},
             {path:"incidents", component: IncidentComponent},
+            {path:"mesIncidents", component: MesIncidentComponent},
+            {path:"profil", component: ProfilComponent},
+            { path: 'user/:id/edit', component: UserComponent },
         ],
         canActivate: [authGuard]
     },
@@ -45,6 +50,4 @@ export const routes: Routes = [
             component: ConnexionComponent
         },
 
-        
-    
 ];

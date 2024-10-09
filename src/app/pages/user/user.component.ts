@@ -18,6 +18,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { RoleUserComponent } from './role_user/role_user.component';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-user',
@@ -60,6 +61,7 @@ export class UserComponent implements OnInit {
         private roleService : RoleService,
         private messageService : MessageService,
         private confirmationService : ConfirmationService,
+        private route: ActivatedRoute,
         
     ) { }
 
@@ -145,23 +147,6 @@ export class UserComponent implements OnInit {
 
     }
     
-
- /*async deleteUser(userToDelete: User) {
-        //this.isLoading.set(true);
-        if(userToDelete.id == -1){
-        try {
-            
-            await this.userService.delete(userToDelete.id);
-            this.users.update(val => {  
-                return val.filter(user => user.id!=userToDelete.id);
-            });    
-        } catch (error) {
-            console.log(error);
-        }finally{
-            this.isLoading.set(false);
-        }
-    }
-}*/
 
 async deleteUser(userToDelete: User) {
     this.isLoading.set(true);

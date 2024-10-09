@@ -1,5 +1,5 @@
 <div> 
-    <div class="mb-4 font-bold">
+    <div class="mb-4 font-bold underline">
         {{user()?.prenom}} {{user()?.nom}}
     </div>
     @for (selectRole of checkedRoles(); track selectRole.role.id) {
@@ -12,6 +12,6 @@
         </div>
     }
     <div class="flex justify-content-center">
-        <p-button (click)="save()" label="Enregistrer" [text]="true" [raised]="true" severity="success" />
+        <p-button (click)="save()" label="Enregistrer" [text]="true" [raised]="true" severity="primary" />
     </div>
 </div>

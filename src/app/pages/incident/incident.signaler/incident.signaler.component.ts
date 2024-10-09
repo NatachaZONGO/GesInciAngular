@@ -26,6 +26,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'app-incident.signaler',
     templateUrl: './incident.signaler.component.html',
+    styleUrl: './incident.signaler.component.scss',
     standalone: true,
     providers: [
       MessageService,

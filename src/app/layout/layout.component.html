@@ -1,5 +1,5 @@
 <div class="w-screen surface-300">
-    <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white header">
+    <div class="w-full surface-200 flex justify-content-between px-4 py-2 bg-white header header header-bar">
         <div class="flex gap-4">
             <p-button (click)="switchMenu()" icon="pi pi-align-justify" severity="success" ></p-button>
             <div class="text-3xl font-bold">
@@ -8,9 +8,11 @@
                     <span style="color: red;">Inci</span>
                 </h5>
             </div>
-        </div>        
+            <img src="/images/logosona.png" alt="Logo SONABEL" style="max-width: 120px; margin-bottom: 0.3rem;">      
+
+        </div> 
         <div>
-            <div>
+            <div class="flex gap-4" style="background-color: aliceblue; border-radius: 10px; padding: 0rem">
                 <p-button (click)="user.toggle($event)" [label]="utilisateur ? utilisateur.nom + ' ' + utilisateur.prenom : 'Invité'" [text]="true" [raised]="true" severity="secondary"></p-button>
                 <p-overlayPanel #user><p-menu [model]="userMenuItems"></p-menu></p-overlayPanel>
               </div>
@@ -22,7 +24,7 @@
     </div>
     <div class="w-full flex gap-4 corps"> 
     <div class="menuBar" [class.close]="!isMenuOpen()" >
-            <p-menu [model]="items" >
+            <p-menu [model]="items" styleClass=" w-full md:w-15rem">
                 <ng-template pTemplate="submenuheader" let-item>
                     @if (canShow(item.roles)) {  
                         <span [class]="item.icon"></span> 
@@ -52,6 +54,13 @@
                             </a>
                         }
                     }
+                </ng-template>
+                <ng-template pTemplate="end">
+                    <button pRipple class="relative overflow-hidden w-full p-link flex align-items-center p-2 pl-3 text-color hover:surface-200 border-noround" >
+                        <span class="inline-flex flex-column">
+                            <span class="text-sm">SONABEL</span>
+                        </span>
+                    </button>
                 </ng-template>
             </p-menu>
         </div>
